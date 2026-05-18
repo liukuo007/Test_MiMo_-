@@ -1,0 +1,84 @@
+{
+  "mappings": [
+    {
+      "name": "短信验证码发送成功",
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/api/v1/sms/send-code",
+        "headers": {
+          "Content-Type": { "contains": "application/json" }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "success": true,
+          "message_id": "MSG-{{randomValue type='UUID'}}",
+          "status": "sent",
+          "phone": "+86138****0000",
+          "expire_seconds": 300
+        }
+      }
+    },
+    {
+      "name": "短信通知发送成功",
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/api/v1/sms/send-notification",
+        "headers": {
+          "Content-Type": { "contains": "application/json" }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "success": true,
+          "message_id": "MSG-{{randomValue type='UUID'}}",
+          "status": "delivered",
+          "segments": 1
+        }
+      }
+    },
+    {
+      "name": "短信发送失败-余额不足",
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/api/v1/sms/send-code",
+        "headers": {
+          "X-Mock-Sms-Fail": { "equalTo": "insufficient_balance" }
+        }
+      },
+      "response": {
+        "status": 402,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "success": false,
+          "error_code": "INSUFFICIENT_BALANCE",
+          "error_message": "短信账户余额不足"
+        }
+      }
+    },
+    {
+      "name": "短信发送失败-频率限制",
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/api/v1/sms/send-code",
+        "headers": {
+          "X-Mock-Sms-Fail": { "equalTo": "rate_limit" }
+        }
+      },
+      "response": {
+        "status": 429,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "success": false,
+          "error_code": "RATE_LIMIT_EXCEEDED",
+          "error_message": "发送频率过高，请稍后再试",
+          "retry_after_seconds": 60
+        }
+      }
+    }
+  ]
+}

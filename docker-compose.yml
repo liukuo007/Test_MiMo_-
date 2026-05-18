@@ -1,0 +1,154 @@
+version: "3.9"
+
+services:
+  # ===== 后端 =====
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8100:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-mimo}:${POSTGRES_PASSWORD:-mimo123}@postgres:5432/${POSTGRES_DB:-mimo}
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      MQTT_BROKER_URL: mqtt://mosquitto:1883
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-in-production}
+      APP_DEBUG: "true"
+      LOG_LEVEL: INFO
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+
+  # ===== Celery Worker =====
+  celery-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A app.celery_app worker --loglevel=info -Q test,ai,report,celery -c 4
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-mimo}:${POSTGRES_PASSWORD:-mimo123}@postgres:5432/${POSTGRES_DB:-mimo}
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ===== 前端 =====
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3100:3100"
+    depends_on:
+      - backend
+    environment:
+      VITE_PROXY_TARGET: http://backend:8000
+      VITE_PROXY_TARGET_WS: ws://backend:8000
+    command: npm run dev -- --host 0.0.0.0 --port 3100
+
+  # ===== AI 评测服务 =====
+  ai-evaluator:
+    build:
+      context: ./ai-evaluator
+      dockerfile: Dockerfile
+    ports:
+      - "8200:8200"
+    environment:
+      MODEL_DIR: /models
+      DATASET_DIR: /datasets
+      MIMO_API_URL: http://backend:8000/api/v1
+      DEVICE: cpu
+      PORT: "8200"
+    volumes:
+      - ai_models:/models
+      - ai_datasets:/datasets
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # ===== IoT 仿真器 =====
+  iot-simulator:
+    build:
+      context: ./iot-simulator
+      dockerfile: Dockerfile
+    environment:
+      MQTT_BROKER_URL: mqtt://mosquitto:1883
+      MIMO_API_URL: http://backend:8000/api/v1
+      DEVICE_COUNT: "10"
+      REGION: cn
+      HEARTBEAT_INTERVAL: "30"
+    depends_on:
+      - backend
+      - mosquitto
+    restart: unless-stopped
+
+  # ===== WireMock (第三方 API Mock) =====
+  wiremock:
+    image: wiremock/wiremock:3.5.4-alpine
+    platform: linux/amd64
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - ./backend/integrations/wiremock/mappings:/home/wiremock/mappings
+      - wiremock_data:/home/wiremock/__files
+    command: ["--verbose", "--global-response-templating"]
+    restart: unless-stopped
+
+  # ===== 基础设施 =====
+  mosquitto:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+    volumes:
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-mimo}
+      POSTGRES_USER: ${POSTGRES_USER:-mimo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mimo123}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mimo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6479:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:
+  mosquitto_data:
+  mosquitto_log:
+  ai_models:
+  ai_datasets:
+  wiremock_data:

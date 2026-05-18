@@ -1,0 +1,38 @@
+{
+  "mappings": [
+    {
+      "name": "SSO Token 校验成功",
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/api/v1/sso/validate"
+      },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "valid": true,
+          "user_id": "usr-001",
+          "username": "test_user",
+          "roles": ["operator", "viewer"],
+          "expires_at": "{{now offset='1 hours' format='yyyy-MM-dd HH:mm:ss'}}"
+        }
+      }
+    },
+    {
+      "name": "SSO Token 刷新成功",
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/api/v1/sso/refresh"
+      },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "access_token": "new-access-token-{{randomValue type='UUID'}}",
+          "refresh_token": "new-refresh-token-{{randomValue type='UUID'}}",
+          "expires_in": 3600
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,174 @@
+# Testkube Custom Test CRDs for MiMo
+#
+# 将 MiMo 测试任务包装为 Testkube 认可的自定义测试类型
+# 部署: kubectl apply -f custom-test-crds.yaml
+#
+# 使用: testkube create test --name mimo-iot-test --type mimo/test-task --test-content-type string --test-content '{"task_id": 1}'
+
+---
+# 自定义测试执行器 CRD
+apiVersion: executor.testkube.io/v1
+kind: Executor
+metadata:
+  name: mimo-executor
+  namespace: testkube
+spec:
+  executor_type: container
+  image: mimo/backend:latest
+  command:
+    - python
+    - -m
+    - app.tasks.test_execution
+  args:
+    - --task-id
+    - "{{execution.id}}"
+  types:
+    - mimo/test-task
+  features:
+    - artifacts
+    - copy-files
+  content_types:
+    - string
+    - git-uri
+  meta:
+    iconUri: "https://raw.githubusercontent.com/mimo-platform/logo/main/icon.png"
+    docsUri: "https://docs.mimo-platform.dev"
+
+---
+# 自定义测试类型 CRD
+apiVersion: tests.testkube.io/v3
+kind: TestType
+metadata:
+  name: mimo/test-task
+  namespace: testkube
+spec:
+  executor: mimo-executor
+  description: "MiMo 智能货柜全链路测试任务"
+  contentTypes:
+    - string
+    - git-uri
+  defaultArgs:
+    - "--task-id"
+  features:
+    - artifacts
+    - copy-files
+
+---
+# 示例测试 CRD: IoT 全链路测试
+apiVersion: tests.testkube.io/v3
+kind: Test
+metadata:
+  name: mimo-iot-e2e
+  namespace: testkube
+spec:
+  type: mimo/test-task
+  content: |
+    {
+      "task_id": 1,
+      "dag_config": {
+        "steps": [
+          {"id": "heartbeat", "name": "设备心跳", "type": "iot", "config": {"device_sn": "MC-CN-SZ-0001"}},
+          {"id": "payment", "name": "支付验证", "type": "payment", "config": {"amount": 9.9}, "dependencies": ["heartbeat"]},
+          {"id": "assert", "name": "结果断言", "type": "assert", "config": {"type": "equals", "actual": "paid", "expected": "paid"}, "dependencies": ["payment"]}
+        ]
+      }
+    }
+  executionRequest:
+    args:
+      - "--task-id"
+    envs:
+      MIMO_API_URL: "http://mimo-backend.mimo.svc.cluster.local:8000"
+      DATABASE_URL: "postgresql+asyncpg://mimo:mimo123@postgres.mimo.svc.cluster.local:5432/mimo"
+
+---
+# 示例测试 CRD: 支付流程回归测试
+apiVersion: tests.testkube.io/v3
+kind: Test
+metadata:
+  name: mimo-payment-regression
+  namespace: testkube
+spec:
+  type: mimo/test-task
+  content: |
+    {
+      "task_id": 2,
+      "dag_config": {
+        "steps": [
+          {"id": "pay-create", "name": "创建支付订单", "type": "payment", "config": {"request": {"amount": 19.9, "method": "wechat"}}},
+          {"id": "pay-query", "name": "查询支付状态", "type": "api", "config": {"base_url": "http://wiremock:8080", "steps": [{"method": "GET", "path": "/api/v1/payment/query/ORD-TEST"}]}, "dependencies": ["pay-create"]},
+          {"id": "sms", "name": "发送通知短信", "type": "sms", "config": {"action": "send_notification", "phone": "+8613800000000", "message": "支付成功"}, "dependencies": ["pay-query"]}
+        ]
+      }
+    }
+  executionRequest:
+    envs:
+      MIMO_API_URL: "http://mimo-backend.mimo.svc.cluster.local:8000"
+
+---
+# 示例测试 CRD: AI 模型评测
+apiVersion: tests.testkube.io/v3
+kind: Test
+metadata:
+  name: mimo-ai-evaluation
+  namespace: testkube
+spec:
+  type: mimo/test-task
+  content: |
+    {
+      "task_id": 3,
+      "dag_config": {
+        "steps": [
+          {"id": "ai-eval", "name": "SKU识别评测", "type": "ai_eval", "config": {"model_path": "/models/sku_v3.onnx", "dataset_path": "medium", "model_version": "v3.0", "threshold": 0.95}}
+        ]
+      }
+    }
+
+---
+# 测试套件: 全链路回归
+apiVersion: tests.testkube.io/v3
+kind: TestSuite
+metadata:
+  name: mimo-full-regression
+  namespace: testkube
+spec:
+  steps:
+    - execute:
+        name: mimo-iot-e2e
+    - execute:
+        name: mimo-payment-regression
+    - execute:
+        name: mimo-ai-evaluation
+  executionRequest:
+    jobTemplate: |
+      apiVersion: batch/v1
+      kind: Job
+      spec:
+        template:
+          spec:
+            containers:
+              - name: "{{testName}}"
+                image: mimo/backend:latest
+                resources:
+                  requests:
+                    memory: "256Mi"
+                    cpu: "250m"
+                  limits:
+                    memory: "512Mi"
+                    cpu: "500m"
+
+---
+# 触发器: 当代码推送到 main 分支时自动执行回归测试
+apiVersion: triggers.testkube.io/v1
+kind: Trigger
+metadata:
+  name: mimo-git-trigger
+  namespace: testkube
+spec:
+  resource: repository
+  event: push
+  action: run
+  execution: test-suite
+  testSuiteName: mimo-full-regression
+  conditions:
+    - type: branch
+      value: main

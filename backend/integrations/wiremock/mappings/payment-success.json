@@ -1,0 +1,78 @@
+{
+  "mappings": [
+    {
+      "name": "支付下单成功",
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/api/v1/payment/create",
+        "headers": {
+          "Content-Type": { "contains": "application/json" }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "success": true,
+          "order_id": "ORD-WM-{{randomValue type='UUID'}}",
+          "transaction_id": "TXN-{{randomValue type='UUID'}}",
+          "amount": 10.00,
+          "currency": "CNY",
+          "status": "pending",
+          "pay_url": "https://mock-pay.example.com/pay/{{randomValue type='UUID'}}",
+          "created_at": "{{now format='yyyy-MM-dd HH:mm:ss'}}"
+        }
+      }
+    },
+    {
+      "name": "支付回调成功",
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/api/v1/payment/notify"
+      },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "success": true,
+          "message": "OK"
+        }
+      }
+    },
+    {
+      "name": "支付查询-已完成",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/api/v1/payment/query/.*"
+      },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "success": true,
+          "order_id": "ORD-WM-TEST",
+          "status": "paid",
+          "amount": 10.00,
+          "paid_at": "{{now format='yyyy-MM-dd HH:mm:ss'}}"
+        }
+      }
+    },
+    {
+      "name": "支付退款成功",
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/api/v1/payment/refund"
+      },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "success": true,
+          "refund_id": "RFD-{{randomValue type='UUID'}}",
+          "status": "refunded",
+          "refund_amount": 10.00
+        }
+      }
+    }
+  ]
+}

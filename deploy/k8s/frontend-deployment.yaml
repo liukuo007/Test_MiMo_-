@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mimo-frontend
+  namespace: mimo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mimo-frontend
+  template:
+    metadata:
+      labels:
+        app: mimo-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: mimo/frontend:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mimo-frontend
+  namespace: mimo
+spec:
+  selector:
+    app: mimo-frontend
+  ports:
+    - port: 3000
+      targetPort: 3000
