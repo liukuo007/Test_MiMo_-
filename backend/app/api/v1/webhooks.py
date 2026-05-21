@@ -1,21 +1,17 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, Header, HTTPException, status, Query
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import get_db
-from app.models.test_task import TestTask, TaskStatus, TriggerType
-from app.models.test_result import TestResult
-from app.schemas.webhook import WebhookTriggerRequest, PipelineStatus
-from app.dependencies import CurrentUser
-from app.core.exceptions import NotFoundError
 from app.celery_app import celery_app
 from app.config import get_settings
+from app.database import get_db
+from app.models.test_result import TestResult
+from app.models.test_task import TaskStatus, TestTask, TriggerType
+from app.schemas.webhook import PipelineStatus, WebhookTriggerRequest
 
 router = APIRouter()
 
@@ -24,7 +20,7 @@ router = APIRouter()
 async def webhook_trigger(
     req: WebhookTriggerRequest,
     db: AsyncSession = Depends(get_db),
-    x_webhook_secret: Optional[str] = Header(default=None),
+    x_webhook_secret: str | None = Header(default=None),
 ):
     """外部 CI 系统通过 webhook 触发测试执行"""
     settings = get_settings()
@@ -73,7 +69,7 @@ async def webhook_trigger(
 @router.get("/pipelines", response_model=list[PipelineStatus])
 async def list_pipelines(
     db: AsyncSession = Depends(get_db),
-    project_id: Optional[int] = None,
+    project_id: int | None = None,
     limit: int = Query(20, ge=1, le=100),
 ):
     query = select(TestTask).where(TestTask.trigger_type == TriggerType.WEBHOOK)

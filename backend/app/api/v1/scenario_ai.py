@@ -5,8 +5,8 @@ from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.services.scenario_ai_service import scenario_ai_service
 from app.services.ai_copilot_service import ai_copilot_service
+from app.services.scenario_ai_service import scenario_ai_service
 
 router = APIRouter()
 

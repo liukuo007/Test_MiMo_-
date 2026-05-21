@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Optional
 
 from datetime import datetime
 
@@ -10,19 +9,19 @@ from app.models.test_task import TaskStatus, TriggerType
 
 class TestTaskCreate(BaseModel):
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     environment: str
-    branch: Optional[str] = None
-    dag_config: Optional[dict] = None
-    config: Optional[dict] = None
+    branch: str | None = None
+    dag_config: dict | None = None
+    config: dict | None = None
     project_id: int
 
 
 class TestTaskUpdate(BaseModel):
-    name: Optional[str] = None
-    status: Optional[TaskStatus] = None
-    dag_config: Optional[dict] = None
-    config: Optional[dict] = None
+    name: str | None = None
+    status: TaskStatus | None = None
+    dag_config: dict | None = None
+    config: dict | None = None
 
 
 class TestTaskStepResponse(BaseModel):
@@ -31,10 +30,10 @@ class TestTaskStepResponse(BaseModel):
     step_type: str
     status: TaskStatus
     order: int
-    config: Optional[dict]
-    result: Optional[dict]
-    started_at: Optional[datetime]
-    finished_at: Optional[datetime]
+    config: dict | None
+    result: dict | None
+    started_at: datetime | None
+    finished_at: datetime | None
 
     class Config:
         from_attributes = True
@@ -43,15 +42,15 @@ class TestTaskStepResponse(BaseModel):
 class TestTaskResponse(BaseModel):
     id: int
     name: str
-    description: Optional[str]
+    description: str | None
     status: TaskStatus
     trigger_type: TriggerType
     environment: str
-    branch: Optional[str]
+    branch: str | None
     project_id: int
     created_by: int
-    started_at: Optional[datetime]
-    finished_at: Optional[datetime]
+    started_at: datetime | None
+    finished_at: datetime | None
     created_at: datetime
 
     class Config:

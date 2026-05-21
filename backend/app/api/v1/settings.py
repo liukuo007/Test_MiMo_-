@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status, Query
-from sqlalchemy import select, func
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
+from app.dependencies import CurrentUser
 from app.models.setting import SystemSetting
 from app.models.user import User
-from app.schemas.setting import SettingResponse
-from app.dependencies import CurrentUser
 
 router = APIRouter()
 

@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from typing import Optional
-
-from sqlalchemy import select, func, desc
+from sqlalchemy import desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.region import Region, RegionMetric
-from app.models.health_score import HealthScoreSnapshot
 from app.models.device import Device, DeviceStatus
+from app.models.health_score import HealthScoreSnapshot
+from app.models.region import Region, RegionMetric
 
 
 class RegionService:
@@ -16,11 +14,11 @@ class RegionService:
         result = await db.execute(select(Region).order_by(Region.id))
         return list(result.scalars().all())
 
-    async def get_region(self, db: AsyncSession, region_id: int) -> Optional[Region]:
+    async def get_region(self, db: AsyncSession, region_id: int) -> Region | None:
         result = await db.execute(select(Region).where(Region.id == region_id))
         return result.scalar_one_or_none()
 
-    async def get_region_by_code(self, db: AsyncSession, code: str) -> Optional[Region]:
+    async def get_region_by_code(self, db: AsyncSession, code: str) -> Region | None:
         result = await db.execute(select(Region).where(Region.code == code))
         return result.scalar_one_or_none()
 
@@ -31,7 +29,7 @@ class RegionService:
         await db.refresh(region)
         return region
 
-    async def update_region(self, db: AsyncSession, region_id: int, data: dict) -> Optional[Region]:
+    async def update_region(self, db: AsyncSession, region_id: int, data: dict) -> Region | None:
         region = await self.get_region(db, region_id)
         if not region:
             return None

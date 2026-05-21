@@ -1,45 +1,44 @@
 from __future__ import annotations
-from typing import Optional
 
 from datetime import datetime
 
 from pydantic import BaseModel
 
-from app.models.test_case import TestType, Priority
+from app.models.test_case import Priority, TestType
 
 
 class TestCaseCreate(BaseModel):
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     test_type: TestType
     priority: Priority = Priority.P1
-    module: Optional[str] = None
-    steps: Optional[dict] = None
-    expected_result: Optional[str] = None
-    tags: Optional[list[str]] = None
+    module: str | None = None
+    steps: dict | None = None
+    expected_result: str | None = None
+    tags: list[str] | None = None
     project_id: int
 
 
 class TestCaseUpdate(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
-    priority: Optional[Priority] = None
-    module: Optional[str] = None
-    steps: Optional[dict] = None
-    expected_result: Optional[str] = None
-    tags: Optional[list[str]] = None
+    name: str | None = None
+    description: str | None = None
+    priority: Priority | None = None
+    module: str | None = None
+    steps: dict | None = None
+    expected_result: str | None = None
+    tags: list[str] | None = None
 
 
 class TestCaseResponse(BaseModel):
     id: int
     name: str
-    description: Optional[str]
+    description: str | None
     test_type: TestType
     priority: Priority
-    module: Optional[str]
-    steps: Optional[dict]
-    expected_result: Optional[str]
-    tags: Optional[list]
+    module: str | None
+    steps: dict | None
+    expected_result: str | None
+    tags: list | None
     project_id: int
     created_by: int
     is_active: bool

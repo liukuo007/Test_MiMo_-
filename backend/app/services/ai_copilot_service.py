@@ -1,17 +1,14 @@
 from __future__ import annotations
 
 import re
-from typing import Optional
 
-from sqlalchemy import select, desc
+from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.test_result import TestResult
-from app.models.device_event import DeviceEvent
 from app.models.device import Device
+from app.models.device_event import DeviceEvent
+from app.models.test_result import TestResult
 from app.models.trace import TraceSpan
-from app.models.test_case import TestCase
-from app.models.scenario import ScenarioTemplate
 from app.services.stability_service import FAILURE_CATEGORIES
 
 
@@ -209,7 +206,7 @@ class AICopilotService:
             "suggested_devices": ["虚拟货柜 A", "虚拟货柜 B"],
         }
 
-    async def auto_fix_selector(self, selector: str, context: Optional[str] = None) -> dict:
+    async def auto_fix_selector(self, selector: str, context: str | None = None) -> dict:
         """Suggest fixes for a broken selector."""
         fixes = []
 

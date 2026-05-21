@@ -1,15 +1,13 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.schemas.environment import (
     EnvironmentCreate,
-    EnvironmentUpdate,
     EnvironmentResponse,
+    EnvironmentUpdate,
     HealthCheckResponse,
     SnapshotCreate,
     SnapshotResponse,
@@ -21,8 +19,8 @@ router = APIRouter()
 
 @router.get("", response_model=list[EnvironmentResponse])
 async def list_environments(
-    env_type: Optional[str] = None,
-    status: Optional[str] = None,
+    env_type: str | None = None,
+    status: str | None = None,
     db: AsyncSession = Depends(get_db),
 ):
     return await environment_service.list_environments(db, env_type=env_type, status=status)

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 
@@ -11,7 +10,7 @@ class QualityLoopRuleBase(BaseModel):
     trigger_metric: str
     threshold: float
     operator: str = "<"
-    action_chain: Optional[dict] = None
+    action_chain: dict | None = None
     enabled: bool = True
 
 
@@ -20,12 +19,12 @@ class QualityLoopRuleCreate(QualityLoopRuleBase):
 
 
 class QualityLoopRuleUpdate(BaseModel):
-    name: Optional[str] = None
-    trigger_metric: Optional[str] = None
-    threshold: Optional[float] = None
-    operator: Optional[str] = None
-    action_chain: Optional[dict] = None
-    enabled: Optional[bool] = None
+    name: str | None = None
+    trigger_metric: str | None = None
+    threshold: float | None = None
+    operator: str | None = None
+    action_chain: dict | None = None
+    enabled: bool | None = None
 
 
 class QualityLoopRuleResponse(QualityLoopRuleBase):
@@ -39,12 +38,12 @@ class QualityLoopExecutionResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
     rule_id: int
-    rule_name: Optional[str] = None
+    rule_name: str | None = None
     trigger_value: float
     current_step: int
     total_steps: int
     status: str
-    steps_log: Optional[dict] = None
-    defect_id: Optional[int] = None
+    steps_log: dict | None = None
+    defect_id: int | None = None
     started_at: datetime
-    completed_at: Optional[datetime] = None
+    completed_at: datetime | None = None

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional, List
-
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, Query
@@ -9,24 +7,24 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.exceptions import NotFoundError
 from app.database import get_db
 from app.models.trace import Trace, TraceSpan
-from app.core.exceptions import NotFoundError
 
 router = APIRouter()
 
 
 class SpanIngest(BaseModel):
     span_id: str
-    parent_span_id: Optional[str] = None
+    parent_span_id: str | None = None
     service: str
     operation: str
     status: str = "ok"
-    duration_ms: Optional[int] = None
-    tags: Optional[dict] = None
-    logs: Optional[list] = None
+    duration_ms: int | None = None
+    tags: dict | None = None
+    logs: list | None = None
     started_at: datetime
-    finished_at: Optional[datetime] = None
+    finished_at: datetime | None = None
 
 
 class TraceIngest(BaseModel):
@@ -34,11 +32,11 @@ class TraceIngest(BaseModel):
     service: str
     operation: str
     status: str = "ok"
-    duration_ms: Optional[int] = None
-    tags: Optional[dict] = None
+    duration_ms: int | None = None
+    tags: dict | None = None
     started_at: datetime
-    finished_at: Optional[datetime] = None
-    spans: List[SpanIngest] = []
+    finished_at: datetime | None = None
+    spans: list[SpanIngest] = []
 
 
 @router.post("/ingest")
@@ -78,8 +76,8 @@ async def ingest_trace(req: TraceIngest, db: AsyncSession = Depends(get_db)):
 @router.get("")
 async def list_traces(
     db: AsyncSession = Depends(get_db),
-    service: Optional[str] = None,
-    status: Optional[str] = None,
+    service: str | None = None,
+    status: str | None = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ):

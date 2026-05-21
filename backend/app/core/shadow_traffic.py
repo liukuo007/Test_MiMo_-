@@ -18,8 +18,8 @@ from __future__ import annotations
 
 import time
 import uuid
+from collections.abc import Callable
 from contextvars import ContextVar
-from typing import Callable
 
 import structlog
 from starlette.middleware.base import BaseHTTPMiddleware

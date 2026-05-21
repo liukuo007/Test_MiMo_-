@@ -1,20 +1,18 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import get_db
-from app.models.schedule import Schedule
-from app.models.test_task import TestTask, TaskStatus, TriggerType
-from app.schemas.schedule import ScheduleCreate, ScheduleUpdate, ScheduleResponse
-from app.dependencies import CurrentUser
-from app.core.exceptions import NotFoundError
 from app.celery_app import celery_app
+from app.core.exceptions import NotFoundError
+from app.database import get_db
+from app.dependencies import CurrentUser
+from app.models.schedule import Schedule
+from app.models.test_task import TaskStatus, TestTask, TriggerType
+from app.schemas.schedule import ScheduleCreate, ScheduleResponse, ScheduleUpdate
 
 router = APIRouter()
 
@@ -23,7 +21,7 @@ router = APIRouter()
 async def list_schedules(
     db: AsyncSession = Depends(get_db),
     current_user: CurrentUser = None,
-    is_active: Optional[bool] = None,
+    is_active: bool | None = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ):

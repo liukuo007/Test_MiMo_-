@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select
@@ -9,22 +8,22 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.health_score import HealthScoreSnapshot
-from app.services.health_score_service import health_score_service, RELEASE_THRESHOLD
 from app.schemas.health_score import (
-    HealthScoreResponse,
     DimensionDetail,
+    HealthScoreResponse,
     HealthScoreTrend,
     HealthScoreTrendItem,
     ReleaseGateResponse,
 )
+from app.services.health_score_service import RELEASE_THRESHOLD, health_score_service
 
 router = APIRouter()
 
 
 @router.get("", response_model=HealthScoreResponse)
 async def get_health_score(
-    project_id: Optional[int] = None,
-    region: Optional[str] = None,
+    project_id: int | None = None,
+    region: str | None = None,
     db: AsyncSession = Depends(get_db),
 ):
     result = await health_score_service.compute_health_score(db, project_id, region)
@@ -46,7 +45,7 @@ async def get_health_score(
 @router.get("/trend", response_model=HealthScoreTrend)
 async def get_health_score_trend(
     days: int = Query(7, ge=1, le=90),
-    project_id: Optional[int] = None,
+    project_id: int | None = None,
     db: AsyncSession = Depends(get_db),
 ):
     from datetime import timedelta
@@ -74,8 +73,8 @@ async def get_health_score_trend(
 
 @router.get("/release-gate", response_model=ReleaseGateResponse)
 async def get_release_gate(
-    project_id: Optional[int] = None,
-    region: Optional[str] = None,
+    project_id: int | None = None,
+    region: str | None = None,
     db: AsyncSession = Depends(get_db),
 ):
     result = await health_score_service.compute_health_score(db, project_id, region)

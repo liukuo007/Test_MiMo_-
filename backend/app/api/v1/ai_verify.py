@@ -1,23 +1,24 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import get_db
-from app.models.ai_model import AIModel, AIModelVersion, AIEvaluation
-from app.schemas.ai import (
-    AIModelCreate, AIModelResponse,
-    AIModelVersionCreate, AIModelVersionResponse,
-    AIEvaluationCreate, AIEvaluationResponse,
-    AICompareRequest,
-)
-from app.engines.ai_engine import ai_engine
-from app.dependencies import CurrentUser
-from app.core.exceptions import NotFoundError
 from app.celery_app import celery_app
+from app.core.exceptions import NotFoundError
+from app.database import get_db
+from app.dependencies import CurrentUser
+from app.engines.ai_engine import ai_engine
+from app.models.ai_model import AIEvaluation, AIModel, AIModelVersion
+from app.schemas.ai import (
+    AICompareRequest,
+    AIEvaluationCreate,
+    AIEvaluationResponse,
+    AIModelCreate,
+    AIModelResponse,
+    AIModelVersionCreate,
+    AIModelVersionResponse,
+)
 
 router = APIRouter()
 
@@ -61,7 +62,7 @@ async def create_model_version(req: AIModelVersionCreate, db: AsyncSession = Dep
 @router.get("/evaluations", response_model=list[AIEvaluationResponse])
 async def list_evaluations(
     db: AsyncSession = Depends(get_db),
-    model_version_id: Optional[int] = None,
+    model_version_id: int | None = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ):

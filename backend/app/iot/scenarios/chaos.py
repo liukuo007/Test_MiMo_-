@@ -1,9 +1,8 @@
 import asyncio
-import random
 
-from app.iot.virtual_device import VirtualDevice
 from app.iot.device_state import DeviceEvent
-from app.iot.fault_injector import FaultInjector, FaultConfig, FaultType
+from app.iot.fault_injector import FaultConfig, FaultInjector, FaultType
+from app.iot.virtual_device import VirtualDevice
 
 
 async def run_chaos_scenario(device: VirtualDevice, fault_type: FaultType) -> dict:

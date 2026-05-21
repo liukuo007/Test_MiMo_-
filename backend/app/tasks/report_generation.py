@@ -3,8 +3,8 @@ from __future__ import annotations
 import asyncio
 from datetime import datetime
 
-from celery import shared_task
 import structlog
+from celery import shared_task
 
 logger = structlog.get_logger()
 
@@ -26,13 +26,14 @@ def generate_report_task(self, project_id: int):
 
 
 async def _build_report(project_id: int) -> dict:
-    from sqlalchemy import select, func
+    from sqlalchemy import func, select
+
     from app.database import async_session
-    from app.models.test_result import TestResult
-    from app.models.test_task import TestTask, TaskStatus
-    from app.models.device import Device, DeviceStatus
     from app.models.ai_model import AIEvaluation
+    from app.models.device import Device, DeviceStatus
     from app.models.quality_report import QualityReport
+    from app.models.test_result import TestResult
+    from app.models.test_task import TaskStatus, TestTask
 
     async with async_session() as db:
         # 测试指标

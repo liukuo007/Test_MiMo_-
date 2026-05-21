@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Optional
 
 from datetime import datetime
 
@@ -13,9 +12,9 @@ class ScheduleCreate(BaseModel):
 
 
 class ScheduleUpdate(BaseModel):
-    name: Optional[str] = None
-    cron_expression: Optional[str] = None
-    is_active: Optional[bool] = None
+    name: str | None = None
+    cron_expression: str | None = None
+    is_active: bool | None = None
 
 
 class ScheduleResponse(BaseModel):
@@ -24,9 +23,9 @@ class ScheduleResponse(BaseModel):
     task_id: int
     cron_expression: str
     is_active: bool
-    last_run_at: Optional[datetime]
-    next_run_at: Optional[datetime]
-    created_by: Optional[int]
+    last_run_at: datetime | None
+    next_run_at: datetime | None
+    created_by: int | None
     created_at: datetime
     updated_at: datetime
 

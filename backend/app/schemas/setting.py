@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Optional
 
 from datetime import datetime
 
@@ -8,23 +7,23 @@ from pydantic import BaseModel
 
 class SettingCreate(BaseModel):
     key: str
-    value: Optional[dict] = None
+    value: dict | None = None
     category: str = "general"
-    description: Optional[str] = None
+    description: str | None = None
 
 
 class SettingUpdate(BaseModel):
-    value: Optional[dict] = None
-    category: Optional[str] = None
-    description: Optional[str] = None
+    value: dict | None = None
+    category: str | None = None
+    description: str | None = None
 
 
 class SettingResponse(BaseModel):
     id: int
     key: str
-    value: Optional[dict]
+    value: dict | None
     category: str
-    description: Optional[str]
+    description: str | None
     updated_at: datetime
 
     class Config:

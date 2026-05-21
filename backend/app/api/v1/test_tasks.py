@@ -1,20 +1,18 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import select, func, or_
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.database import get_db
-from app.models.test_task import TestTask, TaskStatus
-from app.schemas.test_task import TestTaskCreate, TestTaskUpdate, TestTaskResponse, TestTaskDetailResponse
-from app.dependencies import CurrentUser
-from app.core.exceptions import NotFoundError
 from app.celery_app import celery_app
+from app.core.exceptions import NotFoundError
+from app.database import get_db
+from app.dependencies import CurrentUser
+from app.models.test_task import TaskStatus, TestTask
+from app.schemas.test_task import TestTaskCreate, TestTaskDetailResponse, TestTaskResponse, TestTaskUpdate
 
 router = APIRouter()
 
@@ -23,9 +21,9 @@ router = APIRouter()
 async def list_test_tasks(
     db: AsyncSession = Depends(get_db),
     current_user: CurrentUser = None,
-    project_id: Optional[int] = None,
-    status: Optional[TaskStatus] = None,
-    search: Optional[str] = None,
+    project_id: int | None = None,
+    status: TaskStatus | None = None,
+    search: str | None = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ):

@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Optional
 
 from datetime import datetime
 
@@ -13,7 +12,7 @@ class DeviceEventResponse(BaseModel):
     device_id: int
     event_type: DeviceEventType
     message: str
-    details: Optional[dict]
+    details: dict | None
     created_at: datetime
 
     class Config:

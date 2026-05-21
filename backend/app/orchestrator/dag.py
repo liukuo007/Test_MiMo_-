@@ -195,7 +195,7 @@ class DAG:
                         branch_node.status = StepStatus.SKIPPED
 
     @classmethod
-    def from_config(cls, config: dict) -> "DAG":
+    def from_config(cls, config: dict) -> DAG:
         dag = cls()
         for step in config.get("steps", []):
             dag.add_node(DAGNode(

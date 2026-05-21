@@ -4,15 +4,15 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
+from app.models.load_test import TrafficProfile
 from app.schemas.load_test import (
+    LoadTestMetricResponse,
+    LoadTestRunResponse,
+    RunLoadTestRequest,
     TrafficProfileCreate,
     TrafficProfileResponse,
-    LoadTestRunResponse,
-    LoadTestMetricResponse,
-    RunLoadTestRequest,
 )
 from app.services.load_test_service import load_test_service
-from app.models.load_test import TrafficProfile
 
 router = APIRouter()
 

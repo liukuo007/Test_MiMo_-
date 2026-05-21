@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.exceptions import DeviceOccupiedError, NotFoundError
 from app.models.device import Device, DeviceStatus, DeviceType
-from app.core.exceptions import NotFoundError, DeviceOccupiedError
 
 
 class DeviceService:
@@ -35,7 +33,7 @@ class DeviceService:
         return device
 
     async def create_virtual_batch(
-        self, db: AsyncSession, count: int, device_type: DeviceType, region: str, project_id: Optional[int]
+        self, db: AsyncSession, count: int, device_type: DeviceType, region: str, project_id: int | None
     ) -> list[Device]:
         devices = []
         for i in range(count):

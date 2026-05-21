@@ -6,9 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.schemas.region import (
     RegionCreate,
-    RegionUpdate,
     RegionResponse,
-    RegionHealthSummary,
+    RegionUpdate,
 )
 from app.services.region_service import region_service
 

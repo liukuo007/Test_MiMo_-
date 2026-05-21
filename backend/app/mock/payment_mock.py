@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 import asyncio
 import random
 from dataclasses import dataclass
@@ -25,9 +23,9 @@ class PaymentRequest:
 @dataclass
 class PaymentResponse:
     success: bool
-    transaction_id: Optional[str] = None
-    error_code: Optional[str] = None
-    error_message: Optional[str] = None
+    transaction_id: str | None = None
+    error_code: str | None = None
+    error_message: str | None = None
 
 
 class PaymentMock:

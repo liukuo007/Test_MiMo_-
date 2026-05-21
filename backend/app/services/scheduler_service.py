@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 import asyncio
 import logging
 from datetime import datetime
@@ -16,7 +14,7 @@ class SchedulerService:
 
     def __init__(self):
         self._running = False
-        self._task: Optional[asyncio.Task] = None
+        self._task: asyncio.Task | None = None
 
     async def start(self):
         """启动调度器"""
@@ -48,9 +46,10 @@ class SchedulerService:
 
     async def _check_and_execute(self):
         """检查并执行到期的定时任务"""
+        from sqlalchemy import select
+
         from app.database import async_session
         from app.models.schedule import Schedule
-        from sqlalchemy import select
 
         async with async_session() as db:
             now = datetime.now()
@@ -70,9 +69,10 @@ class SchedulerService:
 
     async def _execute_schedule(self, db, schedule):
         """执行单个定时任务"""
-        from app.models.test_task import TestTask, TaskStatus, TriggerType
-        from app.celery_app import celery_app
         from sqlalchemy import select
+
+        from app.celery_app import celery_app
+        from app.models.test_task import TaskStatus, TestTask, TriggerType
 
         task_result = await db.execute(
             select(TestTask).where(TestTask.id == schedule.task_id)

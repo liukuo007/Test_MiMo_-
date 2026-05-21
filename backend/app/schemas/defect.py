@@ -1,32 +1,31 @@
 from __future__ import annotations
-from typing import Optional
 
 from datetime import datetime
 
 from pydantic import BaseModel
 
-from app.models.defect import DefectStatus, DefectPriority, DefectSource
+from app.models.defect import DefectPriority, DefectSource, DefectStatus
 
 
 class DefectCreate(BaseModel):
     title: str
-    description: Optional[str] = None
+    description: str | None = None
     priority: DefectPriority = DefectPriority.P2
-    test_case_id: Optional[int] = None
-    test_result_id: Optional[int] = None
-    device_sn: Optional[str] = None
-    assigned_to: Optional[int] = None
-    screenshot_url: Optional[str] = None
-    tags: Optional[dict] = None
+    test_case_id: int | None = None
+    test_result_id: int | None = None
+    device_sn: str | None = None
+    assigned_to: int | None = None
+    screenshot_url: str | None = None
+    tags: dict | None = None
 
 
 class DefectUpdate(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    priority: Optional[DefectPriority] = None
-    assigned_to: Optional[int] = None
-    screenshot_url: Optional[str] = None
-    tags: Optional[dict] = None
+    title: str | None = None
+    description: str | None = None
+    priority: DefectPriority | None = None
+    assigned_to: int | None = None
+    screenshot_url: str | None = None
+    tags: dict | None = None
 
 
 class DefectStatusTransition(BaseModel):
@@ -40,19 +39,19 @@ class DefectAssign(BaseModel):
 class DefectResponse(BaseModel):
     id: int
     title: str
-    description: Optional[str]
+    description: str | None
     status: DefectStatus
     priority: DefectPriority
     source: DefectSource
-    device_sn: Optional[str]
-    test_case_id: Optional[int]
-    test_result_id: Optional[int]
-    assigned_to: Optional[int]
-    created_by: Optional[int]
-    screenshot_url: Optional[str]
-    tags: Optional[dict]
-    resolved_at: Optional[datetime]
-    closed_at: Optional[datetime]
+    device_sn: str | None
+    test_case_id: int | None
+    test_result_id: int | None
+    assigned_to: int | None
+    created_by: int | None
+    screenshot_url: str | None
+    tags: dict | None
+    resolved_at: datetime | None
+    closed_at: datetime | None
     created_at: datetime
     updated_at: datetime
 
@@ -61,5 +60,5 @@ class DefectResponse(BaseModel):
 
 
 class DefectDetailResponse(DefectResponse):
-    assignee_name: Optional[str] = None
-    creator_name: Optional[str] = None
+    assignee_name: str | None = None
+    creator_name: str | None = None

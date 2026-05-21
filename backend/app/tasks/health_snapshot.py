@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+
 import structlog
 
 from app.celery_app import celery_app

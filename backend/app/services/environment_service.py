@@ -2,19 +2,18 @@ from __future__ import annotations
 
 import asyncio
 import time
-from typing import Optional
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.models.environment import Environment, EnvironmentSnapshot, EnvironmentHealthCheck
+from app.models.environment import Environment, EnvironmentHealthCheck, EnvironmentSnapshot
 
 
 class EnvironmentService:
 
     async def list_environments(
-        self, db: AsyncSession, env_type: Optional[str] = None, status: Optional[str] = None
+        self, db: AsyncSession, env_type: str | None = None, status: str | None = None
     ) -> list[Environment]:
         q = select(Environment).order_by(Environment.id)
         if env_type:
@@ -24,7 +23,7 @@ class EnvironmentService:
         result = await db.execute(q)
         return list(result.scalars().all())
 
-    async def get_environment(self, db: AsyncSession, env_id: int) -> Optional[Environment]:
+    async def get_environment(self, db: AsyncSession, env_id: int) -> Environment | None:
         result = await db.execute(
             select(Environment)
             .where(Environment.id == env_id)
@@ -39,7 +38,7 @@ class EnvironmentService:
         await db.refresh(env)
         return env
 
-    async def update_environment(self, db: AsyncSession, env_id: int, data: dict) -> Optional[Environment]:
+    async def update_environment(self, db: AsyncSession, env_id: int, data: dict) -> Environment | None:
         env = await self.get_environment(db, env_id)
         if not env:
             return None
@@ -183,8 +182,8 @@ class EnvironmentService:
             return "down", round(latency, 2), {"error": str(e)}
 
     async def create_snapshot(
-        self, db: AsyncSession, env_id: int, name: str, snapshot_type: str = "manual", notes: Optional[str] = None
-    ) -> Optional[EnvironmentSnapshot]:
+        self, db: AsyncSession, env_id: int, name: str, snapshot_type: str = "manual", notes: str | None = None
+    ) -> EnvironmentSnapshot | None:
         env = await self.get_environment(db, env_id)
         if not env:
             return None
@@ -209,7 +208,7 @@ class EnvironmentService:
         await db.refresh(snapshot)
         return snapshot
 
-    async def restore_snapshot(self, db: AsyncSession, snapshot_id: int) -> Optional[Environment]:
+    async def restore_snapshot(self, db: AsyncSession, snapshot_id: int) -> Environment | None:
         result = await db.execute(
             select(EnvironmentSnapshot).where(EnvironmentSnapshot.id == snapshot_id)
         )

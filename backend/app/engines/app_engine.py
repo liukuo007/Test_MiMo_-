@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 import asyncio
 import random
 import time
@@ -16,8 +14,8 @@ logger = structlog.get_logger()
 class AppTestStep:
     name: str
     action: str  # tap, swipe, input, assert, screenshot
-    locator: Optional[str] = None
-    value: Optional[str] = None
+    locator: str | None = None
+    value: str | None = None
 
 
 @dataclass
@@ -25,8 +23,8 @@ class AppTestResult:
     step_name: str
     status: str
     duration_ms: float
-    screenshot_url: Optional[str] = None
-    error: Optional[str] = None
+    screenshot_url: str | None = None
+    error: str | None = None
 
 
 class AppiumAppEngine:

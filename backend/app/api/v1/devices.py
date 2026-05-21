@@ -1,19 +1,17 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import select, func, or_
+from pydantic import BaseModel
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.exceptions import NotFoundError
 from app.database import get_db
+from app.dependencies import CurrentUser
 from app.models.device import Device, DeviceStatus
 from app.models.device_event import DeviceEvent, DeviceEventType
-from app.schemas.device import DeviceCreate, DeviceUpdate, DeviceResponse, DeviceControlRequest, VirtualDeviceCreate
+from app.schemas.device import DeviceControlRequest, DeviceCreate, DeviceResponse, DeviceUpdate, VirtualDeviceCreate
 from app.schemas.device_event import DeviceEventResponse
-from pydantic import BaseModel
-from app.dependencies import CurrentUser
-from app.core.exceptions import NotFoundError
 from app.services.device_service import device_service
 
 router = APIRouter()
@@ -23,10 +21,10 @@ router = APIRouter()
 async def list_devices(
     db: AsyncSession = Depends(get_db),
     current_user: CurrentUser = None,
-    status: Optional[DeviceStatus] = None,
-    region: Optional[str] = None,
-    project_id: Optional[int] = None,
-    search: Optional[str] = None,
+    status: DeviceStatus | None = None,
+    region: str | None = None,
+    project_id: int | None = None,
+    search: str | None = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ):
@@ -84,7 +82,7 @@ class VirtualHeartbeat(BaseModel):
 class VirtualEvent(BaseModel):
     device_sn: str
     event_type: str
-    details: Optional[dict] = None
+    details: dict | None = None
 
 
 @router.post("/virtual/heartbeat")

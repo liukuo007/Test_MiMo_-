@@ -4,11 +4,11 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.exceptions import NotFoundError
 from app.database import get_db
+from app.dependencies import CurrentUser
 from app.models.user import User
 from app.schemas.user import UserResponse, UserUpdate
-from app.dependencies import CurrentUser
-from app.core.exceptions import NotFoundError
 
 router = APIRouter()
 

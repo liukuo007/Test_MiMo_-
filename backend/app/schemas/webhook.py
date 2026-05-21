@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Optional
 
 from datetime import datetime
 
@@ -12,8 +11,8 @@ class WebhookTriggerRequest(BaseModel):
     project_id: int
     branch: str = "main"
     environment: str = "staging"
-    commit_sha: Optional[str] = None
-    callback_url: Optional[str] = None
+    commit_sha: str | None = None
+    callback_url: str | None = None
 
 
 class CICallbackConfig(BaseModel):
@@ -24,14 +23,14 @@ class CICallbackConfig(BaseModel):
 class PipelineStatus(BaseModel):
     task_id: int
     status: TaskStatus
-    branch: Optional[str]
-    commit_sha: Optional[str]
-    pass_rate: Optional[float]
-    total_cases: Optional[int]
-    passed_cases: Optional[int]
-    failed_cases: Optional[int]
+    branch: str | None
+    commit_sha: str | None
+    pass_rate: float | None
+    total_cases: int | None
+    passed_cases: int | None
+    failed_cases: int | None
     triggered_at: datetime
-    finished_at: Optional[datetime]
+    finished_at: datetime | None
 
     class Config:
         from_attributes = True

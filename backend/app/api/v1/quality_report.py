@@ -3,15 +3,15 @@ from __future__ import annotations
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
+from app.models.ai_model import AIEvaluation
+from app.models.device import Device, DeviceStatus
 from app.models.quality_report import QualityReport
 from app.models.test_result import TestResult
-from app.models.test_task import TestTask, TaskStatus
-from app.models.device import Device, DeviceStatus
-from app.models.ai_model import AIEvaluation
+from app.models.test_task import TaskStatus, TestTask
 from app.schemas.quality_report import QualityReportResponse
 
 router = APIRouter()

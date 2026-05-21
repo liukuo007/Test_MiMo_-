@@ -1,18 +1,15 @@
 from __future__ import annotations
 
-from typing import Optional
-
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.exceptions import NotFoundError
 from app.database import get_db
+from app.dependencies import CurrentUser
 from app.models.defect import Defect
 from app.models.quality_report import QualityReport
 from app.models.test_case import TestCase
-from app.dependencies import CurrentUser
-from app.core.exceptions import NotFoundError
-
 from integrations.metersphere.sync_to_ms import metersphere_sync
 
 router = APIRouter()
@@ -55,7 +52,7 @@ async def sync_case(case_id: int, db: AsyncSession = Depends(get_db), current_us
 
 @router.post("/sync/all-defects", summary="批量同步所有未关闭缺陷")
 async def sync_all_defects(
-    status: Optional[str] = None,
+    status: str | None = None,
     db: AsyncSession = Depends(get_db),
     current_user: CurrentUser = None,
 ):

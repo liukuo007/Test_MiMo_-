@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 
@@ -11,8 +10,8 @@ class DevicePoolBase(BaseModel):
     pool_type: str = "manual"
     auto_assign: bool = False
     max_devices: int = 0
-    description: Optional[str] = None
-    config: Optional[dict] = None
+    description: str | None = None
+    config: dict | None = None
 
 
 class DevicePoolCreate(DevicePoolBase):
@@ -20,12 +19,12 @@ class DevicePoolCreate(DevicePoolBase):
 
 
 class DevicePoolUpdate(BaseModel):
-    name: Optional[str] = None
-    pool_type: Optional[str] = None
-    auto_assign: Optional[bool] = None
-    max_devices: Optional[int] = None
-    description: Optional[str] = None
-    config: Optional[dict] = None
+    name: str | None = None
+    pool_type: str | None = None
+    auto_assign: bool | None = None
+    max_devices: int | None = None
+    description: str | None = None
+    config: dict | None = None
 
 
 class DevicePoolResponse(DevicePoolBase):
@@ -41,9 +40,9 @@ class DevicePoolMemberResponse(BaseModel):
     id: int
     pool_id: int
     device_id: int
-    device_name: Optional[str] = None
-    device_sn: Optional[str] = None
-    device_status: Optional[str] = None
+    device_name: str | None = None
+    device_sn: str | None = None
+    device_status: str | None = None
     added_at: datetime
 
 
@@ -66,7 +65,7 @@ class DeviceHealthScoreResponse(BaseModel):
     id: int
     device_id: int
     score: float
-    factors: Optional[dict] = None
+    factors: dict | None = None
     computed_at: datetime
 
 

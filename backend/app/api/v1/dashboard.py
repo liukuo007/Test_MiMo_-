@@ -1,17 +1,15 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import select, func, cast, Date
+from sqlalchemy import Date, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.device import Device, DeviceStatus
-from app.models.test_task import TestTask, TaskStatus
 from app.models.test_result import TestResult
+from app.models.test_task import TaskStatus, TestTask
 
 router = APIRouter()
 
@@ -70,8 +68,8 @@ async def get_overview(db: AsyncSession = Depends(get_db)):
 
 @router.get("/quality-score")
 async def get_quality_score(db: AsyncSession = Depends(get_db)):
-    from app.models.test_case import TestCase, TestType
     from app.models.ai_model import AIEvaluation
+    from app.models.test_case import TestCase, TestType
 
     # 1. 自动化覆盖率: 有自动化类型的用例占总用例比例
     total_cases = await db.execute(select(func.count(TestCase.id)))
@@ -187,8 +185,8 @@ async def get_trend(days: int = Query(7, ge=1, le=90), db: AsyncSession = Depend
 @router.get("/radar")
 async def get_radar(db: AsyncSession = Depends(get_db)):
     """获取质量维度雷达图数据（复用 quality-score 逻辑）"""
-    from app.models.test_case import TestCase, TestType
     from app.models.ai_model import AIEvaluation
+    from app.models.test_case import TestCase, TestType
 
     # 1. 自动化覆盖率
     total_cases = await db.execute(select(func.count(TestCase.id)))

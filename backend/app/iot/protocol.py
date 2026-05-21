@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-from typing import Optional
-
+import json
 from dataclasses import dataclass
 from enum import Enum
-import json
 
 
 class MessageType(str, Enum):
@@ -24,8 +22,8 @@ class IoTMessage:
     message_type: MessageType
     device_sn: str
     payload: dict
-    timestamp: Optional[float] = None
-    message_id: Optional[str] = None
+    timestamp: float | None = None
+    message_id: str | None = None
 
     def to_mqtt_payload(self) -> bytes:
         return json.dumps({
@@ -37,7 +35,7 @@ class IoTMessage:
         }).encode()
 
     @classmethod
-    def from_mqtt_payload(cls, payload: bytes) -> "IoTMessage":
+    def from_mqtt_payload(cls, payload: bytes) -> IoTMessage:
         data = json.loads(payload)
         return cls(
             message_type=MessageType(data["type"]),

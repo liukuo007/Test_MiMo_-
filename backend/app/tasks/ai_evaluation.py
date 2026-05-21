@@ -3,8 +3,8 @@ from __future__ import annotations
 import asyncio
 
 import httpx
-from celery import shared_task
 import structlog
+from celery import shared_task
 
 logger = structlog.get_logger()
 
@@ -30,6 +30,7 @@ def run_ai_evaluation(self, evaluation_id: int, model_path: str, dataset_path: s
 async def _run_evaluation(evaluation_id: int, model_path: str, dataset_path: str) -> dict:
     """执行 AI 评测 — 先尝试远程服务，失败回退本地 mock"""
     from sqlalchemy import select
+
     from app.database import async_session
     from app.models.ai_model import AIEvaluation
 

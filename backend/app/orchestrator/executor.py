@@ -2,15 +2,16 @@ from __future__ import annotations
 
 import asyncio
 import random
+
 import structlog
 
-from app.orchestrator.dag import DAGNode, DAG, StepStatus
-from app.engines.api_engine import api_engine, APIStep
-from app.engines.iot_engine import iot_engine
 from app.engines.ai_engine import ai_engine
-from app.engines.web_engine import web_engine, WebTestStep
-from app.engines.app_engine import app_engine, AppTestStep
-from app.engines.chaos_engine import chaos_engine, ChaosExperiment, FaultType
+from app.engines.api_engine import APIStep, api_engine
+from app.engines.app_engine import AppTestStep, app_engine
+from app.engines.chaos_engine import ChaosExperiment, FaultType, chaos_engine
+from app.engines.iot_engine import iot_engine
+from app.engines.web_engine import WebTestStep, web_engine
+from app.orchestrator.dag import DAG, DAGNode
 
 logger = structlog.get_logger()
 
@@ -289,7 +290,7 @@ class StepExecutor:
 
     async def _execute_payment(self, config: dict) -> dict:
         """执行支付模拟步骤"""
-        from app.mock.payment_mock import payment_mock, PaymentRequest
+        from app.mock.payment_mock import PaymentRequest, payment_mock
 
         req_data = config.get("request", {})
         req = PaymentRequest(

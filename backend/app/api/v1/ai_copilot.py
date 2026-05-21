@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,9 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.schemas.ai_copilot import (
     FailureAnalysisResult,
-    TestGenerationResult,
-    SelectorFixResult,
     ScenarioGenerationResult,
+    SelectorFixResult,
+    TestGenerationResult,
 )
 from app.services.ai_copilot_service import ai_copilot_service
 
@@ -28,7 +26,7 @@ class GenerateRequest(BaseModel):
 
 class SelectorFixRequest(BaseModel):
     selector: str
-    context: Optional[str] = None
+    context: str | None = None
 
 
 @router.post("/analyze-failure", response_model=FailureAnalysisResult)

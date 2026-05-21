@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 import asyncio
 import random
 from dataclasses import dataclass
@@ -23,7 +21,7 @@ class ChaosExperiment:
     fault_type: FaultType
     target: str
     duration_seconds: int
-    params: Optional[dict] = None
+    params: dict | None = None
 
 
 @dataclass

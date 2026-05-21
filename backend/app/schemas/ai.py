@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Optional
 
 from datetime import datetime
 
@@ -8,14 +7,14 @@ from pydantic import BaseModel
 
 class AIModelCreate(BaseModel):
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     model_type: str
 
 
 class AIModelResponse(BaseModel):
     id: int
     name: str
-    description: Optional[str]
+    description: str | None
     model_type: str
     created_by: int
     created_at: datetime
@@ -35,7 +34,7 @@ class AIModelVersionResponse(BaseModel):
     model_id: int
     version: str
     path: str
-    metrics: Optional[dict]
+    metrics: dict | None
     is_active: bool
     created_at: datetime
 
@@ -58,13 +57,13 @@ class AIEvaluationResponse(BaseModel):
     id: int
     model_version_id: int
     dataset_name: str
-    accuracy: Optional[float]
-    recall: Optional[float]
-    f1_score: Optional[float]
-    avg_latency_ms: Optional[float]
+    accuracy: float | None
+    recall: float | None
+    f1_score: float | None
+    avg_latency_ms: float | None
     total_samples: int
     failed_samples: int
-    report_url: Optional[str]
+    report_url: str | None
     created_at: datetime
 
     class Config:

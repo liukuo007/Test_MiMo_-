@@ -1,14 +1,11 @@
 from __future__ import annotations
 
-from typing import Optional
-
-from sqlalchemy import select, func, and_
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.models.device import Device, DeviceStatus
-from app.models.device_event import DeviceEvent
-from app.models.device_pool import DevicePool, DevicePoolMember, DeviceTag, DeviceHealthScore
+from app.models.device_pool import DeviceHealthScore, DevicePool, DevicePoolMember, DeviceTag
 from app.models.test_result import TestResult
 
 
@@ -21,7 +18,7 @@ class DeviceMeshService:
         )
         return list(result.scalars().all())
 
-    async def get_pool(self, db: AsyncSession, pool_id: int) -> Optional[DevicePool]:
+    async def get_pool(self, db: AsyncSession, pool_id: int) -> DevicePool | None:
         result = await db.execute(
             select(DevicePool)
             .where(DevicePool.id == pool_id)
@@ -36,7 +33,7 @@ class DeviceMeshService:
         await db.refresh(pool)
         return pool
 
-    async def update_pool(self, db: AsyncSession, pool_id: int, data: dict) -> Optional[DevicePool]:
+    async def update_pool(self, db: AsyncSession, pool_id: int, data: dict) -> DevicePool | None:
         pool = await self.get_pool(db, pool_id)
         if not pool:
             return None
@@ -165,7 +162,7 @@ class DeviceMeshService:
 
             # Factor 2: Heartbeat freshness
             if device.last_heartbeat:
-                from datetime import datetime, timedelta
+                from datetime import datetime
                 age = (datetime.utcnow() - device.last_heartbeat).total_seconds()
                 if age < 60:
                     factors["heartbeat"] = 100

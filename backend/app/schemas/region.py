@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 
@@ -9,12 +8,12 @@ from pydantic import BaseModel, ConfigDict
 class RegionBase(BaseModel):
     code: str
     name: str
-    mqtt_broker_url: Optional[str] = None
-    payment_endpoint: Optional[str] = None
-    ai_endpoint: Optional[str] = None
-    base_url: Optional[str] = None
-    config: Optional[dict] = None
-    description: Optional[str] = None
+    mqtt_broker_url: str | None = None
+    payment_endpoint: str | None = None
+    ai_endpoint: str | None = None
+    base_url: str | None = None
+    config: dict | None = None
+    description: str | None = None
 
 
 class RegionCreate(RegionBase):
@@ -22,14 +21,14 @@ class RegionCreate(RegionBase):
 
 
 class RegionUpdate(BaseModel):
-    name: Optional[str] = None
-    mqtt_broker_url: Optional[str] = None
-    payment_endpoint: Optional[str] = None
-    ai_endpoint: Optional[str] = None
-    base_url: Optional[str] = None
-    status: Optional[str] = None
-    config: Optional[dict] = None
-    description: Optional[str] = None
+    name: str | None = None
+    mqtt_broker_url: str | None = None
+    payment_endpoint: str | None = None
+    ai_endpoint: str | None = None
+    base_url: str | None = None
+    status: str | None = None
+    config: dict | None = None
+    description: str | None = None
 
 
 class RegionResponse(RegionBase):

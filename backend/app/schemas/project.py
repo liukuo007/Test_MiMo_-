@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Optional
 
 from datetime import datetime
 
@@ -10,20 +9,20 @@ from app.models.project import Environment
 
 class ProjectCreate(BaseModel):
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     environment: Environment = Environment.DEV
 
 
 class ProjectUpdate(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
-    environment: Optional[Environment] = None
+    name: str | None = None
+    description: str | None = None
+    environment: Environment | None = None
 
 
 class ProjectResponse(BaseModel):
     id: int
     name: str
-    description: Optional[str]
+    description: str | None
     environment: Environment
     owner_id: int
     is_active: bool

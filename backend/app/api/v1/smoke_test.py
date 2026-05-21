@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import time
 import uuid
-from typing import Optional
 from datetime import datetime
 
 import httpx
@@ -13,9 +12,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
+from app.dependencies import CurrentUser
 from app.models.device import Device, DeviceStatus, DeviceType
 from app.models.device_event import DeviceEvent, DeviceEventType
-from app.dependencies import CurrentUser
 
 logger = structlog.get_logger()
 
@@ -30,7 +29,7 @@ class SmokeStepResult(BaseModel):
     status: str
     duration_ms: float
     detail: str = ""
-    error: Optional[str] = None
+    error: str | None = None
 
 
 class SmokeTestResponse(BaseModel):

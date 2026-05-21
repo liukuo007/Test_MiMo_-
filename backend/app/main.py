@@ -2,19 +2,19 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 
+import structlog
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.config import get_settings
 from app.api.v1.router import api_router
+from app.config import get_settings
 from app.core.logging import setup_logging
-from app.core.middleware import TraceMiddleware, RequestLoggingMiddleware
 from app.core.metrics import MetricsMiddleware, metrics_endpoint
+from app.core.middleware import RequestLoggingMiddleware, TraceMiddleware
 from app.core.shadow_traffic import ShadowTrafficMiddleware
-from app.services.scheduler_service import scheduler_service
 from app.iot.mqtt_client import mqtt_client
-import structlog
+from app.services.scheduler_service import scheduler_service
 
 settings = get_settings()
 logger = structlog.get_logger()

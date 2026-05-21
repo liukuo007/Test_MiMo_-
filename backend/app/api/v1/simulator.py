@@ -1,21 +1,20 @@
 from __future__ import annotations
 
-import subprocess
 import os
 import re
 import signal
-from typing import Optional
+import subprocess
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter
 from pydantic import BaseModel, field_validator
 
-from app.dependencies import CurrentUser
 from app.core.exceptions import BadRequestError
+from app.dependencies import CurrentUser
 
 router = APIRouter()
 
 # 全局 Locust 进程管理
-_locust_process: Optional[subprocess.Popen] = None
+_locust_process: subprocess.Popen | None = None
 
 _SHELL_METACHARACTERS = set(";|&$`(){}")
 
@@ -56,9 +55,9 @@ class LocustStartRequest(BaseModel):
 
 class LocustStatus(BaseModel):
     running: bool
-    pid: Optional[int] = None
-    host: Optional[str] = None
-    users: Optional[int] = None
+    pid: int | None = None
+    host: str | None = None
+    users: int | None = None
 
 
 @router.post("/start", summary="启动 Locust 压测")
@@ -66,7 +65,7 @@ async def start_locust(req: LocustStartRequest, current_user: CurrentUser = None
     global _locust_process
 
     if _locust_process and _locust_process.poll() is None:
-        raise BadRequestError("Locust is already running (pid={})".format(_locust_process.pid))
+        raise BadRequestError(f"Locust is already running (pid={_locust_process.pid})")
 
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
     locustfile_path = os.path.join(project_root, req.locustfile)
@@ -138,14 +137,14 @@ async def locust_status(current_user: CurrentUser = None):
 @router.get("/results", summary="获取压测结果")
 async def locust_results(current_user: CurrentUser = None):
     """读取 Locust headless 模式输出的 CSV 统计"""
-    import glob
     import csv
+    import glob
 
     results = {}
     for csv_file in glob.glob("/tmp/mimo-locust*.csv"):
         name = os.path.basename(csv_file).replace("mimo-locust_", "").replace(".csv", "")
         try:
-            with open(csv_file, "r") as f:
+            with open(csv_file) as f:
                 reader = csv.DictReader(f)
                 rows = list(reader)
                 if rows:

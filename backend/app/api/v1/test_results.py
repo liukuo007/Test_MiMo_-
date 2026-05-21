@@ -1,31 +1,29 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.exceptions import NotFoundError
 from app.database import get_db
 from app.models.test_result import TestResult
 from app.schemas.test_result import TestResultResponse
-from app.core.exceptions import NotFoundError
 
 router = APIRouter()
 
 
 class TestResultCreate(BaseModel):
     task_id: int
-    test_case_id: Optional[int] = None
+    test_case_id: int | None = None
     status: str
-    duration_ms: Optional[int] = None
-    error_message: Optional[str] = None
-    trace_id: Optional[str] = None
-    device_sn: Optional[str] = None
-    screenshot_url: Optional[str] = None
-    video_url: Optional[str] = None
-    ai_result: Optional[dict] = None
+    duration_ms: int | None = None
+    error_message: str | None = None
+    trace_id: str | None = None
+    device_sn: str | None = None
+    screenshot_url: str | None = None
+    video_url: str | None = None
+    ai_result: dict | None = None
 
 
 @router.post("", response_model=TestResultResponse)
@@ -40,8 +38,8 @@ async def create_test_result(req: TestResultCreate, db: AsyncSession = Depends(g
 @router.get("", response_model=list[TestResultResponse])
 async def list_test_results(
     db: AsyncSession = Depends(get_db),
-    task_id: Optional[int] = None,
-    status: Optional[str] = None,
+    task_id: int | None = None,
+    status: str | None = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ):

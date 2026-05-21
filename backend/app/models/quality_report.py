@@ -1,9 +1,8 @@
 from __future__ import annotations
-from typing import Optional
 
 from datetime import datetime
 
-from sqlalchemy import String, Float, Text, DateTime, ForeignKey, JSON, func
+from sqlalchemy import JSON, DateTime, Float, ForeignKey, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -21,7 +20,7 @@ class QualityReport(Base):
     release_success_rate: Mapped[float] = mapped_column(Float, default=0)
     device_online_rate: Mapped[float] = mapped_column(Float, default=0)
     ai_accuracy: Mapped[float] = mapped_column(Float, default=0)
-    dimensions: Mapped[Optional[dict]] = mapped_column(JSON)
-    summary: Mapped[Optional[dict]] = mapped_column(JSON)
-    project_id: Mapped[Optional[int]] = mapped_column(ForeignKey("projects.id"))
+    dimensions: Mapped[dict | None] = mapped_column(JSON)
+    summary: Mapped[dict | None] = mapped_column(JSON)
+    project_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"))
     generated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

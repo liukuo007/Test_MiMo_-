@@ -5,14 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.schemas.device_pool import (
+    AssignDevicesRequest,
+    DeviceHealthScoreResponse,
     DevicePoolCreate,
-    DevicePoolUpdate,
     DevicePoolResponse,
-    DevicePoolMemberResponse,
+    DevicePoolUpdate,
     DeviceTagCreate,
     DeviceTagResponse,
-    DeviceHealthScoreResponse,
-    AssignDevicesRequest,
     ScheduleRequest,
 )
 from app.services.device_mesh_service import device_mesh_service

@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime
-from typing import Optional
 
-from celery import shared_task
 import structlog
+from celery import shared_task
+from sqlalchemy import select
 
 logger = structlog.get_logger()
 
@@ -34,11 +34,11 @@ def execute_test_task(self, task_id: int, dag_config: dict):
 
 async def _run_and_finalize(task_id: int, dag_config: dict) -> dict:
     """执行 DAG 并完成后续处理（状态更新、缺陷创建、CI 回调）"""
-    from app.orchestrator.dag import DAG
-    from app.orchestrator.scheduler import TaskScheduler
-    from app.orchestrator.executor import step_executor
     from app.database import async_session
-    from app.models.test_task import TestTask, TaskStatus
+    from app.models.test_task import TaskStatus, TestTask
+    from app.orchestrator.dag import DAG
+    from app.orchestrator.executor import step_executor
+    from app.orchestrator.scheduler import TaskScheduler
 
     dag = DAG.from_config(dag_config)
     scheduler = TaskScheduler(step_executor)
@@ -80,7 +80,7 @@ async def _run_and_finalize(task_id: int, dag_config: dict) -> dict:
 async def _mark_failed(task_id: int):
     """异常时标记任务失败"""
     from app.database import async_session
-    from app.models.test_task import TestTask, TaskStatus
+    from app.models.test_task import TaskStatus, TestTask
 
     async with async_session() as db:
         res = await db.execute(select(TestTask).where(TestTask.id == task_id))
@@ -98,6 +98,7 @@ async def _mark_failed(task_id: int):
 async def _auto_create_defects(db, task):
     """任务失败时自动创建缺陷"""
     from sqlalchemy import select
+
     from app.models.defect import Defect, DefectPriority, DefectSource
     from app.models.test_result import TestResult
 
@@ -138,10 +139,11 @@ async def _auto_create_defects(db, task):
     await db.commit()
 
 
-async def _notify_ci_callback(callback_url: str, task, commit_sha: Optional[str], db):
+async def _notify_ci_callback(callback_url: str, task, commit_sha: str | None, db):
     """任务完成后回调 CI 系统"""
     import httpx
     from sqlalchemy import select
+
     from app.models.test_result import TestResult
 
     results = await db.execute(

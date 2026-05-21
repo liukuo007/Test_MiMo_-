@@ -3,9 +3,9 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.user import User
-from app.core.security import hash_password, verify_password, create_access_token
 from app.core.exceptions import BadRequestError, ConflictError
+from app.core.security import create_access_token, hash_password, verify_password
+from app.models.user import User
 
 
 class AuthService:

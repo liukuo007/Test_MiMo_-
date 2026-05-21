@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.schemas.stability import (
-    FlakyTestCaseResponse,
     FailureClusterResponse,
-    StabilityTrendResponse,
+    FlakyTestCaseResponse,
     StabilitySummary,
+    StabilityTrendResponse,
 )
 from app.services.stability_service import stability_service
 
@@ -32,7 +30,7 @@ async def get_summary(db: AsyncSession = Depends(get_db)):
 
 @router.get("/flaky", response_model=list[FlakyTestCaseResponse])
 async def get_flaky_list(
-    status: Optional[str] = None,
+    status: str | None = None,
     db: AsyncSession = Depends(get_db),
 ):
     return await stability_service.get_flaky_list(db, status=status)
@@ -60,7 +58,8 @@ async def trigger_detection(db: AsyncSession = Depends(get_db)):
 
 @router.get("/clusters", response_model=list[FailureClusterResponse])
 async def get_clusters(db: AsyncSession = Depends(get_db)):
-    from sqlalchemy import select, desc
+    from sqlalchemy import desc, select
+
     from app.models.stability import FailureCluster
     result = await db.execute(select(FailureCluster).order_by(desc(FailureCluster.percentage)))
     return list(result.scalars().all())
@@ -69,6 +68,7 @@ async def get_clusters(db: AsyncSession = Depends(get_db)):
 @router.get("/trends", response_model=list[StabilityTrendResponse])
 async def get_trends(db: AsyncSession = Depends(get_db)):
     from sqlalchemy import select
+
     from app.models.stability import StabilityTrend
     result = await db.execute(select(StabilityTrend))
     return list(result.scalars().all())

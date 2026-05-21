@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import random
 from datetime import datetime
-from typing import Optional
 
-from sqlalchemy import select, desc
+from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.load_test import TrafficProfile, LoadTestRun, LoadTestMetric
+from app.models.load_test import LoadTestMetric, LoadTestRun, TrafficProfile
 
 
 class LoadTestService:
@@ -16,7 +15,7 @@ class LoadTestService:
         result = await db.execute(select(TrafficProfile).order_by(TrafficProfile.id))
         return list(result.scalars().all())
 
-    async def get_profile(self, db: AsyncSession, profile_id: int) -> Optional[TrafficProfile]:
+    async def get_profile(self, db: AsyncSession, profile_id: int) -> TrafficProfile | None:
         result = await db.execute(select(TrafficProfile).where(TrafficProfile.id == profile_id))
         return result.scalar_one_or_none()
 
@@ -47,7 +46,7 @@ class LoadTestService:
         await db.refresh(run)
         return run
 
-    async def get_run(self, db: AsyncSession, run_id: int) -> Optional[LoadTestRun]:
+    async def get_run(self, db: AsyncSession, run_id: int) -> LoadTestRun | None:
         result = await db.execute(select(LoadTestRun).where(LoadTestRun.id == run_id))
         return result.scalar_one_or_none()
 
@@ -101,7 +100,6 @@ class LoadTestService:
         total_users = run.device_count + run.virtual_device_count
 
         # Generate synthetic metrics
-        import math
         total_requests = 0
         total_errors = 0
         latencies = []

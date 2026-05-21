@@ -1,13 +1,18 @@
 from __future__ import annotations
-from typing import Optional
 
 import enum
 from datetime import datetime
+from typing import TYPE_CHECKING
 
-from sqlalchemy import String, Text, Enum, DateTime, ForeignKey, JSON, func
+from sqlalchemy import JSON, DateTime, Enum, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
+
+if TYPE_CHECKING:
+    from app.models.test_case import TestCase
+    from app.models.test_result import TestResult
+    from app.models.user import User
 
 
 class DefectStatus(str, enum.Enum):
@@ -47,7 +52,7 @@ class Defect(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(512))
-    description: Mapped[Optional[str]] = mapped_column(Text)
+    description: Mapped[str | None] = mapped_column(Text)
     status: Mapped[DefectStatus] = mapped_column(
         Enum(DefectStatus), default=DefectStatus.NEW, index=True
     )
@@ -57,21 +62,21 @@ class Defect(Base):
     source: Mapped[DefectSource] = mapped_column(
         Enum(DefectSource), default=DefectSource.USER
     )
-    device_sn: Mapped[Optional[str]] = mapped_column(String(64))
-    test_case_id: Mapped[Optional[int]] = mapped_column(ForeignKey("test_cases.id"))
-    test_result_id: Mapped[Optional[int]] = mapped_column(ForeignKey("test_results.id"))
-    assigned_to: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"), index=True)
-    created_by: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"))
-    screenshot_url: Mapped[Optional[str]] = mapped_column(String(512))
-    tags: Mapped[Optional[dict]] = mapped_column(JSON)
-    resolved_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
-    closed_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
+    device_sn: Mapped[str | None] = mapped_column(String(64))
+    test_case_id: Mapped[int | None] = mapped_column(ForeignKey("test_cases.id"))
+    test_result_id: Mapped[int | None] = mapped_column(ForeignKey("test_results.id"))
+    assigned_to: Mapped[int | None] = mapped_column(ForeignKey("users.id"), index=True)
+    created_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    screenshot_url: Mapped[str | None] = mapped_column(String(512))
+    tags: Mapped[dict | None] = mapped_column(JSON)
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime)
+    closed_at: Mapped[datetime | None] = mapped_column(DateTime)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now(), onupdate=func.now()
     )
 
-    test_case: Mapped["Optional[TestCase]"] = relationship(foreign_keys=[test_case_id])
-    test_result: Mapped["Optional[TestResult]"] = relationship(foreign_keys=[test_result_id])
-    assignee: Mapped["Optional[User]"] = relationship(foreign_keys=[assigned_to])
-    creator: Mapped["Optional[User]"] = relationship(foreign_keys=[created_by])
+    test_case: Mapped[TestCase | None] = relationship(foreign_keys=[test_case_id])
+    test_result: Mapped[TestResult | None] = relationship(foreign_keys=[test_result_id])
+    assignee: Mapped[User | None] = relationship(foreign_keys=[assigned_to])
+    creator: Mapped[User | None] = relationship(foreign_keys=[created_by])

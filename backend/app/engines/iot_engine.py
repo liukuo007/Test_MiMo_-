@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 import asyncio
 import uuid
 from dataclasses import dataclass, field
@@ -28,7 +26,7 @@ class SimulationResult:
     status: str
     duration_ms: float
     events: list[dict] = field(default_factory=list)
-    error: Optional[str] = None
+    error: str | None = None
 
 
 class IoTTestEngine:
@@ -81,8 +79,8 @@ class IoTTestEngine:
 
     async def simulate_stress(self, device_count: int, duration_seconds: int) -> dict:
         """压力测试：模拟大量设备并发消息"""
-        import time
         import random
+        import time
 
         start = time.time()
         total_messages = 0

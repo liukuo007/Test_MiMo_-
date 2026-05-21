@@ -1,23 +1,25 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.core.exceptions import BadRequestError, NotFoundError
 from app.database import get_db
-from app.models.defect import Defect, DefectStatus, DefectPriority, DefectSource, VALID_TRANSITIONS
+from app.dependencies import CurrentUser
+from app.models.defect import VALID_TRANSITIONS, Defect, DefectPriority, DefectSource, DefectStatus
 from app.models.user import User
 from app.schemas.defect import (
-    DefectCreate, DefectUpdate, DefectResponse, DefectDetailResponse,
-    DefectStatusTransition, DefectAssign,
+    DefectAssign,
+    DefectCreate,
+    DefectDetailResponse,
+    DefectResponse,
+    DefectStatusTransition,
+    DefectUpdate,
 )
-from app.dependencies import CurrentUser
-from app.core.exceptions import NotFoundError, BadRequestError
 
 router = APIRouter()
 
@@ -56,12 +58,12 @@ async def get_defect_statistics(db: AsyncSession = Depends(get_db)):
 async def list_defects(
     db: AsyncSession = Depends(get_db),
     current_user: CurrentUser = None,
-    status: Optional[DefectStatus] = None,
-    priority: Optional[DefectPriority] = None,
-    source: Optional[DefectSource] = None,
-    assigned_to: Optional[int] = None,
-    device_sn: Optional[str] = None,
-    search: Optional[str] = None,
+    status: DefectStatus | None = None,
+    priority: DefectPriority | None = None,
+    source: DefectSource | None = None,
+    assigned_to: int | None = None,
+    device_sn: str | None = None,
+    search: str | None = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ):

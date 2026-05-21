@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -20,7 +19,7 @@ class HealthScoreResponse(BaseModel):
     release_allowed: bool
     release_threshold: float
     dimensions: list[DimensionDetail]
-    computed_at: Optional[datetime] = None
+    computed_at: datetime | None = None
 
 
 class HealthScoreTrendItem(BaseModel):

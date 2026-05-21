@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 
@@ -10,12 +9,12 @@ class FlakyTestCaseResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
     test_case_id: int
-    test_case_name: Optional[str] = None
+    test_case_name: str | None = None
     flaky_rate: float
-    pattern: Optional[dict] = None
+    pattern: dict | None = None
     status: str
     detected_at: datetime
-    resolved_at: Optional[datetime] = None
+    resolved_at: datetime | None = None
 
 
 class FailureClusterResponse(BaseModel):
@@ -25,8 +24,8 @@ class FailureClusterResponse(BaseModel):
     root_cause_category: str
     sample_count: int
     percentage: float
-    sample_errors: Optional[dict] = None
-    keywords: Optional[dict] = None
+    sample_errors: dict | None = None
+    keywords: dict | None = None
     computed_at: datetime
 
 

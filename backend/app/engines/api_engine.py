@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from typing import Optional
-
-import httpx
 import time
 from dataclasses import dataclass, field
+
+import httpx
 
 
 @dataclass
@@ -13,9 +12,9 @@ class APIStep:
     method: str
     url: str
     headers: dict = field(default_factory=dict)
-    body: Optional[dict] = None
+    body: dict | None = None
     expected_status: int = 200
-    expected_body: Optional[dict] = None
+    expected_body: dict | None = None
 
 
 @dataclass
@@ -24,8 +23,8 @@ class APIResult:
     status: str
     status_code: int
     duration_ms: float
-    response_body: Optional[dict] = None
-    error: Optional[str] = None
+    response_body: dict | None = None
+    error: str | None = None
 
 
 class APITestEngine:

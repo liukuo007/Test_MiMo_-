@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import json
-import ssl
-from typing import Callable, Optional
+from collections.abc import Callable
 
-import structlog
 import paho.mqtt.client as mqtt
+import structlog
 
 from app.config import get_settings
 
@@ -16,7 +15,7 @@ class MQTTClient:
     """paho-mqtt wrapper for device communication."""
 
     def __init__(self):
-        self._client: Optional[mqtt.Client] = None
+        self._client: mqtt.Client | None = None
         self._connected = False
         self._subscriptions: dict[str, list[Callable]] = {}
 

@@ -2,7 +2,38 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from app.api.v1 import auth, users, projects, devices, test_cases, test_tasks, test_results, ai_verify, traces, dashboard, quality_gate, quality_report, datasets, settings, defects, webhooks, schedules, simulator, metersphere, smoke_test, scenarios, health_score, environments, device_mesh, stability, ai_copilot, quality_loop, regions, load_test, scenario_ai
+from app.api.v1 import (
+    ai_copilot,
+    ai_verify,
+    auth,
+    dashboard,
+    datasets,
+    defects,
+    device_mesh,
+    devices,
+    environments,
+    health_score,
+    load_test,
+    metersphere,
+    projects,
+    quality_gate,
+    quality_loop,
+    quality_report,
+    regions,
+    scenario_ai,
+    scenarios,
+    schedules,
+    settings,
+    simulator,
+    smoke_test,
+    stability,
+    test_cases,
+    test_results,
+    test_tasks,
+    traces,
+    users,
+    webhooks,
+)
 
 api_router = APIRouter()
 

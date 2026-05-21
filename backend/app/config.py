@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from pydantic_settings import BaseSettings
-from pydantic import model_validator
 from functools import lru_cache
+
+from pydantic import model_validator
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -65,7 +66,7 @@ class Settings(BaseSettings):
     log_format: str = "json"
 
     @model_validator(mode="after")
-    def _warn_missing_secrets(self) -> "Settings":
+    def _warn_missing_secrets(self) -> Settings:
         if self.app_env != "development":
             if not self.jwt_secret_key:
                 print("WARNING: jwt_secret_key is empty in non-development environment")
