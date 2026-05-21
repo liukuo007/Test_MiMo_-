@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,6 +8,7 @@ from app.database import get_db
 from app.models.setting import SystemSetting
 from app.models.user import User
 from app.schemas.setting import SettingResponse
+from app.dependencies import CurrentUser
 
 router = APIRouter()
 
@@ -53,7 +54,7 @@ async def _ensure_defaults(db: AsyncSession):
 
 
 @router.get("")
-async def get_settings(db: AsyncSession = Depends(get_db)):
+async def get_settings(current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
     count = (await db.execute(select(func.count(SystemSetting.id)))).scalar() or 0
     if count == 0:
         await _ensure_defaults(db)
@@ -64,7 +65,9 @@ async def get_settings(db: AsyncSession = Depends(get_db)):
 
 
 @router.put("")
-async def update_settings(data: dict, db: AsyncSession = Depends(get_db)):
+async def update_settings(data: dict, current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin role required")
     count = (await db.execute(select(func.count(SystemSetting.id)))).scalar() or 0
     if count == 0:
         await _ensure_defaults(db)
@@ -89,7 +92,7 @@ async def update_settings(data: dict, db: AsyncSession = Depends(get_db)):
 
 
 @router.get("/users")
-async def list_users(db: AsyncSession = Depends(get_db)):
+async def list_users(current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).order_by(User.id))
     users = result.scalars().all()
     return [

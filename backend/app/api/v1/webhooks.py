@@ -4,7 +4,7 @@ from typing import Optional
 
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Header, HTTPException, status, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -15,13 +15,26 @@ from app.schemas.webhook import WebhookTriggerRequest, PipelineStatus
 from app.dependencies import CurrentUser
 from app.core.exceptions import NotFoundError
 from app.celery_app import celery_app
+from app.config import get_settings
 
 router = APIRouter()
 
 
 @router.post("/trigger")
-async def webhook_trigger(req: WebhookTriggerRequest, db: AsyncSession = Depends(get_db)):
+async def webhook_trigger(
+    req: WebhookTriggerRequest,
+    db: AsyncSession = Depends(get_db),
+    x_webhook_secret: Optional[str] = Header(default=None),
+):
     """外部 CI 系统通过 webhook 触发测试执行"""
+    settings = get_settings()
+    if settings.webhook_secret:
+        if x_webhook_secret != settings.webhook_secret:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Invalid webhook secret",
+            )
+
     task = TestTask(
         name=f"Webhook trigger - {req.branch}",
         description=f"Triggered by webhook. Commit: {req.commit_sha or 'N/A'}",
@@ -30,7 +43,7 @@ async def webhook_trigger(req: WebhookTriggerRequest, db: AsyncSession = Depends
         environment=req.environment,
         branch=req.branch,
         project_id=req.project_id,
-        created_by=1,  # system user
+        created_by=1,  # system user (webhook fallback)
         config={"commit_sha": req.commit_sha, "callback_url": req.callback_url},
     )
     db.add(task)

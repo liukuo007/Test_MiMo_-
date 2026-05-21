@@ -8,14 +8,15 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8100:8000"
+    restart: unless-stopped
     environment:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-mimo}:${POSTGRES_PASSWORD:-mimo123}@postgres:5432/${POSTGRES_DB:-mimo}
       REDIS_URL: redis://redis:6379/0
       CELERY_BROKER_URL: redis://redis:6379/1
       CELERY_RESULT_BACKEND: redis://redis:6379/2
       MQTT_BROKER_URL: mqtt://mosquitto:1883
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-in-production}
-      APP_DEBUG: "true"
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:?JWT_SECRET_KEY must be set}
+      APP_DEBUG: ${APP_DEBUG:-false}
       LOG_LEVEL: INFO
     depends_on:
       postgres:
@@ -109,8 +110,6 @@ services:
   # ===== 基础设施 =====
   mosquitto:
     image: eclipse-mosquitto:2
-    ports:
-      - "1883:1883"
     volumes:
       - mosquitto_data:/mosquitto/data
       - mosquitto_log:/mosquitto/log
@@ -118,8 +117,6 @@ services:
 
   postgres:
     image: postgres:15-alpine
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-mimo}
       POSTGRES_USER: ${POSTGRES_USER:-mimo}
@@ -134,8 +131,6 @@ services:
 
   redis:
     image: redis:7-alpine
-    ports:
-      - "6479:6379"
     volumes:
       - redis_data:/data
     healthcheck:

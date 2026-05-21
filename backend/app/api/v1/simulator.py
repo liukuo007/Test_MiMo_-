@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import subprocess
 import os
+import re
 import signal
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from app.dependencies import CurrentUser
 from app.core.exceptions import BadRequestError
@@ -16,6 +17,8 @@ router = APIRouter()
 # 全局 Locust 进程管理
 _locust_process: Optional[subprocess.Popen] = None
 
+_SHELL_METACHARACTERS = set(";|&$`(){}")
+
 
 class LocustStartRequest(BaseModel):
     host: str = "http://localhost:8100"
@@ -24,6 +27,31 @@ class LocustStartRequest(BaseModel):
     run_time: str = "5m"
     tags: str = ""  # comma-separated tags
     locustfile: str = "integrations/locust/locustfile.py"
+
+    @field_validator("host")
+    @classmethod
+    def validate_host(cls, v: str) -> str:
+        if not v.startswith(("http://", "https://")):
+            raise ValueError("host must start with http:// or https://")
+        if any(c in _SHELL_METACHARACTERS for c in v):
+            raise ValueError("host contains forbidden characters")
+        return v
+
+    @field_validator("tags")
+    @classmethod
+    def validate_tags(cls, v: str) -> str:
+        if v and not re.fullmatch(r"[a-zA-Z0-9,\-]+", v):
+            raise ValueError("tags must be alphanumeric, hyphens, or comma-separated")
+        return v
+
+    @field_validator("locustfile")
+    @classmethod
+    def validate_locustfile(cls, v: str) -> str:
+        if ".." in v:
+            raise ValueError("locustfile must not contain path traversal (..)")
+        if any(c in _SHELL_METACHARACTERS for c in v):
+            raise ValueError("locustfile contains forbidden characters")
+        return v
 
 
 class LocustStatus(BaseModel):

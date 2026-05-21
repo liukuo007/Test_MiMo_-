@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.config import get_settings
 from app.api.v1.router import api_router
@@ -13,8 +14,10 @@ from app.core.metrics import MetricsMiddleware, metrics_endpoint
 from app.core.shadow_traffic import ShadowTrafficMiddleware
 from app.services.scheduler_service import scheduler_service
 from app.iot.mqtt_client import mqtt_client
+import structlog
 
 settings = get_settings()
+logger = structlog.get_logger()
 
 
 @asynccontextmanager
@@ -39,7 +42,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3100", "http://localhost:5173"],
+    allow_origins=settings.cors_origins.split(","),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -52,6 +55,13 @@ app.add_middleware(RequestLoggingMiddleware)
 app.include_router(api_router, prefix="/api/v1")
 
 app.add_route("/metrics", metrics_endpoint)
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error("unhandled_exception", exc_info=exc, path=request.url.path, method=request.method)
+    detail = str(exc) if settings.app_debug else "Internal server error"
+    return JSONResponse(status_code=500, content={"detail": detail})
 
 
 @app.get("/health")

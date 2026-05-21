@@ -20,6 +20,12 @@ celery_app.conf.update(
     task_track_started=True,
     task_acks_late=True,
     worker_prefetch_multiplier=1,
+    result_expires=3600,
+    task_reject_on_worker_lost=True,
+    task_soft_time_limit=300,
+    task_time_limit=600,
+    worker_max_tasks_per_child=1000,
+    broker_connection_retry_on_startup=True,
     task_routes={
         "app.tasks.test_execution.execute_test_task": {"queue": "test"},
         "app.tasks.ai_evaluation.run_ai_evaluation": {"queue": "ai"},
