@@ -74,3 +74,4 @@ celerybeat.pid
 *.pem
 *.key
 *.crt
+backend/test.db

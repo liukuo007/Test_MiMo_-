@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import enum
 from datetime import datetime
-
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import DateTime, Enum, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -28,7 +27,7 @@ class Project(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(128), unique=True, index=True)
-    description: Mapped[str | None] = mapped_column(Text)
+    description: Mapped[Optional[str]] = mapped_column(Text)
     environment: Mapped[Environment] = mapped_column(Enum(Environment), default=Environment.DEV)
     owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
     is_active: Mapped[bool] = mapped_column(default=True)

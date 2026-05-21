@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -59,7 +61,7 @@ class ScenarioAIService:
             "reconstructed": True,
         }
 
-    def _map_event_to_action(self, event_type: str) -> dict | None:
+    def _map_event_to_action(self, event_type: str) -> Optional[dict]:
         """Map a device event type to a scenario action."""
         mapping = {
             "ITEM_DETECTED": {"action": "simulate_scan", "description": "模拟扫码购物"},

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -30,7 +32,7 @@ async def get_summary(db: AsyncSession = Depends(get_db)):
 
 @router.get("/flaky", response_model=list[FlakyTestCaseResponse])
 async def get_flaky_list(
-    status: str | None = None,
+    status: Optional[str] = None,
     db: AsyncSession = Depends(get_db),
 ):
     return await stability_service.get_flaky_list(db, status=status)

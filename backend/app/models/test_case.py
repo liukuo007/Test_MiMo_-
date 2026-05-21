@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import enum
 from datetime import datetime
-
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import JSON, DateTime, Enum, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -35,13 +34,13 @@ class TestCase(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(256), index=True)
-    description: Mapped[str | None] = mapped_column(Text)
+    description: Mapped[Optional[str]] = mapped_column(Text)
     test_type: Mapped[TestType] = mapped_column(Enum(TestType))
     priority: Mapped[Priority] = mapped_column(Enum(Priority), default=Priority.P1)
-    module: Mapped[str | None] = mapped_column(String(128))
-    steps: Mapped[dict | None] = mapped_column(JSON)
-    expected_result: Mapped[str | None] = mapped_column(Text)
-    tags: Mapped[list | None] = mapped_column(JSON)
+    module: Mapped[Optional[str]] = mapped_column(String(128))
+    steps: Mapped[Optional[dict]] = mapped_column(JSON)
+    expected_result: Mapped[Optional[str]] = mapped_column(Text)
+    tags: Mapped[Optional[list]] = mapped_column(JSON)
     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"))
     created_by: Mapped[int] = mapped_column(ForeignKey("users.id"))
     is_active: Mapped[bool] = mapped_column(default=True)

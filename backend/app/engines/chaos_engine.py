@@ -4,6 +4,7 @@ import asyncio
 import random
 from dataclasses import dataclass
 from enum import Enum
+from typing import Optional
 
 
 class FaultType(str, Enum):
@@ -21,7 +22,7 @@ class ChaosExperiment:
     fault_type: FaultType
     target: str
     duration_seconds: int
-    params: dict | None = None
+    params: Optional[dict] = None
 
 
 @dataclass

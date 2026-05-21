@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -26,7 +28,7 @@ class GenerateRequest(BaseModel):
 
 class SelectorFixRequest(BaseModel):
     selector: str
-    context: str | None = None
+    context: Optional[str] = None
 
 
 @router.post("/analyze-failure", response_model=FailureAnalysisResult)

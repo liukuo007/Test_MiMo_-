@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
+from typing import Any, Optional
 
 
 class StepStatus(str, Enum):
@@ -22,9 +22,9 @@ class DAGNode:
     dependencies: list[str] = field(default_factory=list)
     status: StepStatus = StepStatus.PENDING
     # ── RunnerGo 扩展: 条件分支 ──
-    condition: dict | None = None  # {"field": "x", "operator": "eq", "value": "y", "true_branch": "nodeA", "false_branch": "nodeB"}
+    condition: Optional[dict] = None  # {"field": "x", "operator": "eq", "value": "y", "true_branch": "nodeA", "false_branch": "nodeB"}
     # ── RunnerGo 扩展: 循环 ──
-    loop_config: dict | None = None  # {"max_iterations": 10, "break_condition": {...}, "items_field": "list"}
+    loop_config: Optional[dict] = None  # {"max_iterations": 10, "break_condition": {...}, "items_field": "list"}
     iteration: int = 0  # 当前迭代次数
 
 
@@ -87,7 +87,7 @@ class DAG:
         result = self._compare(actual, operator, expected)
         return result
 
-    def resolve_branch(self, node: DAGNode) -> str | None:
+    def resolve_branch(self, node: DAGNode) -> Optional[str]:
         """根据条件结果返回下一个应执行的分支节点 ID"""
         if node.condition is None:
             return None

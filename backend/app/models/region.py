@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy import JSON, DateTime, Float, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
@@ -14,13 +15,13 @@ class Region(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     code: Mapped[str] = mapped_column(String(8), unique=True)  # SG/US/EU/JP
     name: Mapped[str] = mapped_column(String(64))
-    mqtt_broker_url: Mapped[str | None] = mapped_column(String(512))
-    payment_endpoint: Mapped[str | None] = mapped_column(String(512))
-    ai_endpoint: Mapped[str | None] = mapped_column(String(512))
-    base_url: Mapped[str | None] = mapped_column(String(512))
+    mqtt_broker_url: Mapped[Optional[str]] = mapped_column(String(512))
+    payment_endpoint: Mapped[Optional[str]] = mapped_column(String(512))
+    ai_endpoint: Mapped[Optional[str]] = mapped_column(String(512))
+    base_url: Mapped[Optional[str]] = mapped_column(String(512))
     status: Mapped[str] = mapped_column(String(16), default="active")  # active/inactive/degraded
-    config: Mapped[dict | None] = mapped_column(JSON)
-    description: Mapped[str | None] = mapped_column(Text)
+    config: Mapped[Optional[dict]] = mapped_column(JSON)
+    description: Mapped[Optional[str]] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 

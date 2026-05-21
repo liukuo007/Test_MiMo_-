@@ -3,6 +3,7 @@ from __future__ import annotations
 import time
 import uuid
 from datetime import datetime
+from typing import Optional
 
 import httpx
 import structlog
@@ -29,7 +30,7 @@ class SmokeStepResult(BaseModel):
     status: str
     duration_ms: float
     detail: str = ""
-    error: str | None = None
+    error: Optional[str] = None
 
 
 class SmokeTestResponse(BaseModel):

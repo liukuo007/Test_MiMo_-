@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 from sqlalchemy import select
@@ -20,7 +21,7 @@ router = APIRouter()
 async def webhook_trigger(
     req: WebhookTriggerRequest,
     db: AsyncSession = Depends(get_db),
-    x_webhook_secret: str | None = Header(default=None),
+    x_webhook_secret: Optional[str] = Header(default=None),
 ):
     """外部 CI 系统通过 webhook 触发测试执行"""
     settings = get_settings()
@@ -69,7 +70,7 @@ async def webhook_trigger(
 @router.get("/pipelines", response_model=list[PipelineStatus])
 async def list_pipelines(
     db: AsyncSession = Depends(get_db),
-    project_id: int | None = None,
+    project_id: Optional[int] = None,
     limit: int = Query(20, ge=1, le=100),
 ):
     query = select(TestTask).where(TestTask.trigger_type == TriggerType.WEBHOOK)

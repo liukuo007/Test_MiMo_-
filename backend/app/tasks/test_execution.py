@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime
+from typing import Optional
 
 import structlog
 from celery import shared_task
@@ -139,7 +140,7 @@ async def _auto_create_defects(db, task):
     await db.commit()
 
 
-async def _notify_ci_callback(callback_url: str, task, commit_sha: str | None, db):
+async def _notify_ci_callback(callback_url: str, task, commit_sha: Optional[str], db):
     """任务完成后回调 CI 系统"""
     import httpx
     from sqlalchemy import select

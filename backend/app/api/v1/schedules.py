@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func, select
@@ -21,7 +22,7 @@ router = APIRouter()
 async def list_schedules(
     db: AsyncSession = Depends(get_db),
     current_user: CurrentUser = None,
-    is_active: bool | None = None,
+    is_active: Optional[bool] = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ):

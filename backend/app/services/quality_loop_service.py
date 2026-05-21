@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy import desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,7 +17,7 @@ class QualityLoopService:
         result = await db.execute(select(QualityLoopRule).order_by(QualityLoopRule.id))
         return list(result.scalars().all())
 
-    async def get_rule(self, db: AsyncSession, rule_id: int) -> QualityLoopRule | None:
+    async def get_rule(self, db: AsyncSession, rule_id: int) -> Optional[QualityLoopRule]:
         result = await db.execute(select(QualityLoopRule).where(QualityLoopRule.id == rule_id))
         return result.scalar_one_or_none()
 
@@ -27,7 +28,7 @@ class QualityLoopService:
         await db.refresh(rule)
         return rule
 
-    async def update_rule(self, db: AsyncSession, rule_id: int, data: dict) -> QualityLoopRule | None:
+    async def update_rule(self, db: AsyncSession, rule_id: int, data: dict) -> Optional[QualityLoopRule]:
         rule = await self.get_rule(db, rule_id)
         if not rule:
             return None
@@ -87,7 +88,7 @@ class QualityLoopService:
 
         return executions
 
-    async def _get_metric_value(self, db: AsyncSession, metric: str) -> float | None:
+    async def _get_metric_value(self, db: AsyncSession, metric: str) -> Optional[float]:
         """Get current metric value for rule evaluation."""
         if metric == "health_score":
             from app.models.health_score import HealthScoreSnapshot
@@ -122,7 +123,7 @@ class QualityLoopService:
 
     async def execute_loop(
         self, db: AsyncSession, rule: QualityLoopRule, trigger_value: float
-    ) -> QualityLoopExecution | None:
+    ) -> Optional[QualityLoopExecution]:
         """Execute the action chain for a triggered rule."""
         actions = rule.action_chain or {"actions": [
             {"type": "create_defect", "params": {}},
@@ -202,7 +203,7 @@ class QualityLoopService:
         return execution
 
     async def list_executions(
-        self, db: AsyncSession, rule_id: int | None = None, status: str | None = None
+        self, db: AsyncSession, rule_id: Optional[int] = None, status: Optional[str] = None
     ) -> list[dict]:
         q = select(QualityLoopExecution).order_by(desc(QualityLoopExecution.started_at))
         if rule_id:
@@ -231,7 +232,7 @@ class QualityLoopService:
             })
         return enriched
 
-    async def manual_trigger(self, db: AsyncSession, rule_id: int) -> QualityLoopExecution | None:
+    async def manual_trigger(self, db: AsyncSession, rule_id: int) -> Optional[QualityLoopExecution]:
         """Manually trigger a rule execution."""
         rule = await self.get_rule(db, rule_id)
         if not rule:

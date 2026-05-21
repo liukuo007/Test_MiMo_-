@@ -4,6 +4,7 @@ import asyncio
 import random
 import time
 from dataclasses import dataclass
+from typing import Optional
 
 import structlog
 
@@ -14,9 +15,9 @@ logger = structlog.get_logger()
 class WebTestStep:
     name: str
     action: str  # navigate, click, fill, assert, screenshot
-    selector: str | None = None
-    value: str | None = None
-    url: str | None = None
+    selector: Optional[str] = None
+    value: Optional[str] = None
+    url: Optional[str] = None
 
 
 @dataclass
@@ -24,8 +25,8 @@ class WebTestResult:
     step_name: str
     status: str
     duration_ms: float
-    screenshot_url: str | None = None
-    error: str | None = None
+    screenshot_url: Optional[str] = None
+    error: Optional[str] = None
 
 
 class PlaywrightWebEngine:

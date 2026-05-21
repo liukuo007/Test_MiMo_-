@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import enum
 from datetime import datetime
-
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import JSON, DateTime, Enum, Float, ForeignKey, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -39,13 +38,13 @@ class Device(Base):
     device_type: Mapped[DeviceType] = mapped_column(Enum(DeviceType))
     status: Mapped[DeviceStatus] = mapped_column(Enum(DeviceStatus), default=DeviceStatus.OFFLINE)
     region: Mapped[str] = mapped_column(String(32), default="cn")
-    firmware_version: Mapped[str | None] = mapped_column(String(32))
-    ip_address: Mapped[str | None] = mapped_column(String(45))
-    temperature: Mapped[float | None] = mapped_column(Float)
-    metadata_: Mapped[dict | None] = mapped_column("metadata", JSON)
-    project_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"))
-    occupied_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
-    last_heartbeat: Mapped[datetime | None] = mapped_column(DateTime)
+    firmware_version: Mapped[Optional[str]] = mapped_column(String(32))
+    ip_address: Mapped[Optional[str]] = mapped_column(String(45))
+    temperature: Mapped[Optional[float]] = mapped_column(Float)
+    metadata_: Mapped[Optional[dict]] = mapped_column("metadata", JSON)
+    project_id: Mapped[Optional[int]] = mapped_column(ForeignKey("projects.id"))
+    occupied_by: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"))
+    last_heartbeat: Mapped[Optional[datetime]] = mapped_column(DateTime)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 

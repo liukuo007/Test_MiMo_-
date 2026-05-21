@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import random
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,7 +16,7 @@ class LoadTestService:
         result = await db.execute(select(TrafficProfile).order_by(TrafficProfile.id))
         return list(result.scalars().all())
 
-    async def get_profile(self, db: AsyncSession, profile_id: int) -> TrafficProfile | None:
+    async def get_profile(self, db: AsyncSession, profile_id: int) -> Optional[TrafficProfile]:
         result = await db.execute(select(TrafficProfile).where(TrafficProfile.id == profile_id))
         return result.scalar_one_or_none()
 
@@ -46,7 +47,7 @@ class LoadTestService:
         await db.refresh(run)
         return run
 
-    async def get_run(self, db: AsyncSession, run_id: int) -> LoadTestRun | None:
+    async def get_run(self, db: AsyncSession, run_id: int) -> Optional[LoadTestRun]:
         result = await db.execute(select(LoadTestRun).where(LoadTestRun.id == run_id))
         return result.scalar_one_or_none()
 

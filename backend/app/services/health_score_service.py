@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Optional
 
 import structlog
 from sqlalchemy import case, func, select
@@ -37,7 +38,7 @@ class HealthScoreResult:
 class HealthScoreService:
 
     async def compute_health_score(
-        self, db: AsyncSession, project_id: int | None = None, region: str | None = None
+        self, db: AsyncSession, project_id: Optional[int] = None, region: Optional[str] = None
     ) -> HealthScoreResult:
         """计算 7 维质量健康分"""
 
@@ -68,7 +69,7 @@ class HealthScoreService:
             dimensions=dimensions,
         )
 
-    async def _compute_pass_rate(self, db: AsyncSession, project_id: int | None) -> float:
+    async def _compute_pass_rate(self, db: AsyncSession, project_id: Optional[int]) -> float:
         total_q = select(func.count(TestResult.id))
         passed_q = select(func.count(TestResult.id)).where(TestResult.status == "passed")
 
@@ -105,7 +106,7 @@ class HealthScoreService:
 
         return round(success / total * 100, 1) if total > 0 else 100
 
-    async def _compute_device_online_rate(self, db: AsyncSession, region: str | None) -> float:
+    async def _compute_device_online_rate(self, db: AsyncSession, region: Optional[str]) -> float:
         total_q = select(func.count(Device.id))
         online_q = select(func.count(Device.id)).where(Device.status == DeviceStatus.ONLINE)
 
@@ -151,7 +152,7 @@ class HealthScoreService:
         crash_pct = errors / total * 100
         return round(max(0, 100 - crash_pct * 10), 1)
 
-    async def _compute_flaky_ratio(self, db: AsyncSession, project_id: int | None) -> float:
+    async def _compute_flaky_ratio(self, db: AsyncSession, project_id: Optional[int]) -> float:
         query = (
             select(
                 TestResult.test_case_id,

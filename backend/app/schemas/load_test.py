@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 
 
 class TrafficProfileBase(BaseModel):
     name: str
-    pattern: dict | None = None
+    pattern: Optional[dict] = None
     duration_seconds: int = 300
-    description: str | None = None
+    description: Optional[str] = None
 
 
 class TrafficProfileCreate(TrafficProfileBase):
@@ -25,8 +26,8 @@ class TrafficProfileResponse(TrafficProfileBase):
 class LoadTestRunResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
-    profile_id: int | None = None
-    profile_name: str | None = None
+    profile_id: Optional[int] = None
+    profile_name: Optional[str] = None
     device_count: int
     virtual_device_count: int
     status: str
@@ -34,8 +35,8 @@ class LoadTestRunResponse(BaseModel):
     error_count: int
     avg_latency_ms: float
     p99_latency_ms: float
-    started_at: datetime | None = None
-    completed_at: datetime | None = None
+    started_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
     created_at: datetime
 
 

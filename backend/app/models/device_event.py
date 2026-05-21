@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import enum
 from datetime import datetime
-
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import JSON, DateTime, Enum, ForeignKey, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -35,7 +34,7 @@ class DeviceEvent(Base):
     device_id: Mapped[int] = mapped_column(ForeignKey("devices.id"), index=True)
     event_type: Mapped[DeviceEventType] = mapped_column(Enum(DeviceEventType))
     message: Mapped[str] = mapped_column(Text)
-    details: Mapped[dict | None] = mapped_column(JSON)
+    details: Mapped[Optional[dict]] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     device: Mapped[Device] = relationship(back_populates="events")

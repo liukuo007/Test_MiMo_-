@@ -4,6 +4,7 @@ import asyncio
 import uuid
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Optional
 
 
 class SimulationLevel(str, Enum):
@@ -26,7 +27,7 @@ class SimulationResult:
     status: str
     duration_ms: float
     events: list[dict] = field(default_factory=list)
-    error: str | None = None
+    error: Optional[str] = None
 
 
 class IoTTestEngine:

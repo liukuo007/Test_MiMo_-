@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import asyncio
 import time
+from typing import Optional
 
 from app.iot.device_state import DeviceEvent
 from app.iot.virtual_device import VirtualDevice
 
 
-async def run_normal_flow(device: VirtualDevice, items: list[dict] | None = None) -> dict:
+async def run_normal_flow(device: VirtualDevice, items: Optional[list[dict]] = None) -> dict:
     """正常业务流程：开门 → 取货 → 关门 → 结算"""
     start = time.time()
     events_log = []

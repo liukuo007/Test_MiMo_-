@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 
@@ -8,16 +9,16 @@ from pydantic import BaseModel, ConfigDict
 class EnvironmentBase(BaseModel):
     name: str
     env_type: str = "staging"
-    region: str | None = None
-    base_url: str | None = None
-    mqtt_broker_url: str | None = None
-    db_url: str | None = None
-    redis_url: str | None = None
-    ai_evaluator_url: str | None = None
-    wiremock_url: str | None = None
-    payment_endpoint: str | None = None
-    config: dict | None = None
-    description: str | None = None
+    region: Optional[str] = None
+    base_url: Optional[str] = None
+    mqtt_broker_url: Optional[str] = None
+    db_url: Optional[str] = None
+    redis_url: Optional[str] = None
+    ai_evaluator_url: Optional[str] = None
+    wiremock_url: Optional[str] = None
+    payment_endpoint: Optional[str] = None
+    config: Optional[dict] = None
+    description: Optional[str] = None
 
 
 class EnvironmentCreate(EnvironmentBase):
@@ -25,19 +26,19 @@ class EnvironmentCreate(EnvironmentBase):
 
 
 class EnvironmentUpdate(BaseModel):
-    name: str | None = None
-    env_type: str | None = None
-    region: str | None = None
-    base_url: str | None = None
-    mqtt_broker_url: str | None = None
-    db_url: str | None = None
-    redis_url: str | None = None
-    ai_evaluator_url: str | None = None
-    wiremock_url: str | None = None
-    payment_endpoint: str | None = None
-    status: str | None = None
-    config: dict | None = None
-    description: str | None = None
+    name: Optional[str] = None
+    env_type: Optional[str] = None
+    region: Optional[str] = None
+    base_url: Optional[str] = None
+    mqtt_broker_url: Optional[str] = None
+    db_url: Optional[str] = None
+    redis_url: Optional[str] = None
+    ai_evaluator_url: Optional[str] = None
+    wiremock_url: Optional[str] = None
+    payment_endpoint: Optional[str] = None
+    status: Optional[str] = None
+    config: Optional[dict] = None
+    description: Optional[str] = None
 
 
 class EnvironmentResponse(EnvironmentBase):
@@ -54,8 +55,8 @@ class HealthCheckResponse(BaseModel):
     env_id: int
     component: str
     status: str
-    latency_ms: float | None = None
-    details: dict | None = None
+    latency_ms: Optional[float] = None
+    details: Optional[dict] = None
     checked_at: datetime
 
 
@@ -65,15 +66,15 @@ class SnapshotResponse(BaseModel):
     env_id: int
     name: str
     snapshot_type: str
-    state_data: dict | None = None
-    notes: str | None = None
+    state_data: Optional[dict] = None
+    notes: Optional[str] = None
     created_at: datetime
 
 
 class SnapshotCreate(BaseModel):
     name: str
     snapshot_type: str = "manual"
-    notes: str | None = None
+    notes: Optional[str] = None
 
 
 class EnvironmentHealthSummary(BaseModel):

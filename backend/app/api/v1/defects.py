@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func, select
@@ -58,12 +59,12 @@ async def get_defect_statistics(db: AsyncSession = Depends(get_db)):
 async def list_defects(
     db: AsyncSession = Depends(get_db),
     current_user: CurrentUser = None,
-    status: DefectStatus | None = None,
-    priority: DefectPriority | None = None,
-    source: DefectSource | None = None,
-    assigned_to: int | None = None,
-    device_sn: str | None = None,
-    search: str | None = None,
+    status: Optional[DefectStatus] = None,
+    priority: Optional[DefectPriority] = None,
+    source: Optional[DefectSource] = None,
+    assigned_to: Optional[int] = None,
+    device_sn: Optional[str] = None,
+    search: Optional[str] = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ):

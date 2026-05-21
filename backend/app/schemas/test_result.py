@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -8,15 +9,15 @@ from pydantic import BaseModel
 class TestResultResponse(BaseModel):
     id: int
     task_id: int
-    test_case_id: int | None
+    test_case_id: Optional[int]
     status: str
-    duration_ms: int | None
-    error_message: str | None
-    trace_id: str | None
-    device_sn: str | None
-    screenshot_url: str | None
-    video_url: str | None
-    ai_result: dict | None
+    duration_ms: Optional[int]
+    error_message: Optional[str]
+    trace_id: Optional[str]
+    device_sn: Optional[str]
+    screenshot_url: Optional[str]
+    video_url: Optional[str]
+    ai_result: Optional[dict]
     created_at: datetime
 
     class Config:

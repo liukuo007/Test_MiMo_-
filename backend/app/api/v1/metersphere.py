@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -52,7 +54,7 @@ async def sync_case(case_id: int, db: AsyncSession = Depends(get_db), current_us
 
 @router.post("/sync/all-defects", summary="批量同步所有未关闭缺陷")
 async def sync_all_defects(
-    status: str | None = None,
+    status: Optional[str] = None,
     db: AsyncSession = Depends(get_db),
     current_user: CurrentUser = None,
 ):

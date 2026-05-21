@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -64,8 +66,8 @@ async def manual_trigger(rule_id: int, db: AsyncSession = Depends(get_db)):
 
 @router.get("/executions")
 async def list_executions(
-    rule_id: int | None = None,
-    status: str | None = None,
+    rule_id: Optional[int] = None,
+    status: Optional[str] = None,
     db: AsyncSession = Depends(get_db),
 ):
     return await quality_loop_service.list_executions(db, rule_id=rule_id, status=status)

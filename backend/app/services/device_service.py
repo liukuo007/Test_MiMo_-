@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -33,7 +35,7 @@ class DeviceService:
         return device
 
     async def create_virtual_batch(
-        self, db: AsyncSession, count: int, device_type: DeviceType, region: str, project_id: int | None
+        self, db: AsyncSession, count: int, device_type: DeviceType, region: str, project_id: Optional[int]
     ) -> list[Device]:
         devices = []
         for i in range(count):

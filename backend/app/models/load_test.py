@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy import JSON, DateTime, Float, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
@@ -13,9 +14,9 @@ class TrafficProfile(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(128), unique=True)
-    pattern: Mapped[dict | None] = mapped_column(JSON)  # {phases: [{duration_s, rps, ramp_s}]}
+    pattern: Mapped[Optional[dict]] = mapped_column(JSON)  # {phases: [{duration_s, rps, ramp_s}]}
     duration_seconds: Mapped[int] = mapped_column(Integer, default=300)
-    description: Mapped[str | None] = mapped_column(Text)
+    description: Mapped[Optional[str]] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
@@ -23,7 +24,7 @@ class LoadTestRun(Base):
     __tablename__ = "load_test_runs"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    profile_id: Mapped[int | None] = mapped_column(ForeignKey("traffic_profiles.id"))
+    profile_id: Mapped[Optional[int]] = mapped_column(ForeignKey("traffic_profiles.id"))
     device_count: Mapped[int] = mapped_column(Integer, default=0)
     virtual_device_count: Mapped[int] = mapped_column(Integer, default=0)
     status: Mapped[str] = mapped_column(String(16), default="pending")  # pending/running/completed/failed
@@ -31,8 +32,8 @@ class LoadTestRun(Base):
     error_count: Mapped[int] = mapped_column(Integer, default=0)
     avg_latency_ms: Mapped[float] = mapped_column(Float, default=0)
     p99_latency_ms: Mapped[float] = mapped_column(Float, default=0)
-    started_at: Mapped[datetime | None] = mapped_column(DateTime)
-    completed_at: Mapped[datetime | None] = mapped_column(DateTime)
+    started_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 

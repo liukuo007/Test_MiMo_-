@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -9,19 +10,19 @@ from app.models.test_task import TaskStatus, TriggerType
 
 class TestTaskCreate(BaseModel):
     name: str
-    description: str | None = None
+    description: Optional[str] = None
     environment: str
-    branch: str | None = None
-    dag_config: dict | None = None
-    config: dict | None = None
+    branch: Optional[str] = None
+    dag_config: Optional[dict] = None
+    config: Optional[dict] = None
     project_id: int
 
 
 class TestTaskUpdate(BaseModel):
-    name: str | None = None
-    status: TaskStatus | None = None
-    dag_config: dict | None = None
-    config: dict | None = None
+    name: Optional[str] = None
+    status: Optional[TaskStatus] = None
+    dag_config: Optional[dict] = None
+    config: Optional[dict] = None
 
 
 class TestTaskStepResponse(BaseModel):
@@ -30,10 +31,10 @@ class TestTaskStepResponse(BaseModel):
     step_type: str
     status: TaskStatus
     order: int
-    config: dict | None
-    result: dict | None
-    started_at: datetime | None
-    finished_at: datetime | None
+    config: Optional[dict]
+    result: Optional[dict]
+    started_at: Optional[datetime]
+    finished_at: Optional[datetime]
 
     class Config:
         from_attributes = True
@@ -42,15 +43,15 @@ class TestTaskStepResponse(BaseModel):
 class TestTaskResponse(BaseModel):
     id: int
     name: str
-    description: str | None
+    description: Optional[str]
     status: TaskStatus
     trigger_type: TriggerType
     environment: str
-    branch: str | None
+    branch: Optional[str]
     project_id: int
     created_by: int
-    started_at: datetime | None
-    finished_at: datetime | None
+    started_at: Optional[datetime]
+    finished_at: Optional[datetime]
     created_at: datetime
 
     class Config:

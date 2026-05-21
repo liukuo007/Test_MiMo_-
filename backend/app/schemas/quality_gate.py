@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -11,14 +12,14 @@ class QualityGateRuleCreate(BaseModel):
     threshold: float
     operator: str = "gte"
     is_active: bool = True
-    project_id: int | None = None
+    project_id: Optional[int] = None
 
 
 class QualityGateRuleUpdate(BaseModel):
-    name: str | None = None
-    threshold: float | None = None
-    operator: str | None = None
-    is_active: bool | None = None
+    name: Optional[str] = None
+    threshold: Optional[float] = None
+    operator: Optional[str] = None
+    is_active: Optional[bool] = None
 
 
 class QualityGateRuleResponse(BaseModel):
@@ -28,7 +29,7 @@ class QualityGateRuleResponse(BaseModel):
     threshold: float
     operator: str
     is_active: bool
-    project_id: int | None
+    project_id: Optional[int]
     created_at: datetime
 
     class Config:

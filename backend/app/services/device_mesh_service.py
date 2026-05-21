@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -18,7 +20,7 @@ class DeviceMeshService:
         )
         return list(result.scalars().all())
 
-    async def get_pool(self, db: AsyncSession, pool_id: int) -> DevicePool | None:
+    async def get_pool(self, db: AsyncSession, pool_id: int) -> Optional[DevicePool]:
         result = await db.execute(
             select(DevicePool)
             .where(DevicePool.id == pool_id)
@@ -33,7 +35,7 @@ class DeviceMeshService:
         await db.refresh(pool)
         return pool
 
-    async def update_pool(self, db: AsyncSession, pool_id: int, data: dict) -> DevicePool | None:
+    async def update_pool(self, db: AsyncSession, pool_id: int, data: dict) -> Optional[DevicePool]:
         pool = await self.get_pool(db, pool_id)
         if not pool:
             return None

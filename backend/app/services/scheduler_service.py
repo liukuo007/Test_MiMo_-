@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from datetime import datetime
+from typing import Optional
 
 from croniter import croniter
 
@@ -14,7 +15,7 @@ class SchedulerService:
 
     def __init__(self):
         self._running = False
-        self._task: asyncio.Task | None = None
+        self._task: Optional[asyncio.Task] = None
 
     async def start(self):
         """启动调度器"""

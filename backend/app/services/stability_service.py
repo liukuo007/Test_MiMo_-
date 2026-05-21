@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta
+from typing import Optional
 
 from sqlalchemy import desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -188,7 +189,7 @@ class StabilityService:
         await db.commit()
         return [trend]
 
-    async def get_flaky_list(self, db: AsyncSession, status: str | None = None) -> list[dict]:
+    async def get_flaky_list(self, db: AsyncSession, status: Optional[str] = None) -> list[dict]:
         q = select(FlakyTestCase).order_by(desc(FlakyTestCase.flaky_rate))
         if status:
             q = q.where(FlakyTestCase.status == status)

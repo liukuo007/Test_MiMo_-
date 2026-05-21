@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func, select
@@ -21,9 +22,9 @@ router = APIRouter()
 async def list_test_tasks(
     db: AsyncSession = Depends(get_db),
     current_user: CurrentUser = None,
-    project_id: int | None = None,
-    status: TaskStatus | None = None,
-    search: str | None = None,
+    project_id: Optional[int] = None,
+    status: Optional[TaskStatus] = None,
+    search: Optional[str] = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ):

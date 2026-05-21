@@ -1,29 +1,30 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
 
 class SettingCreate(BaseModel):
     key: str
-    value: dict | None = None
+    value: Optional[dict] = None
     category: str = "general"
-    description: str | None = None
+    description: Optional[str] = None
 
 
 class SettingUpdate(BaseModel):
-    value: dict | None = None
-    category: str | None = None
-    description: str | None = None
+    value: Optional[dict] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
 
 
 class SettingResponse(BaseModel):
     id: int
     key: str
-    value: dict | None
+    value: Optional[dict]
     category: str
-    description: str | None
+    description: Optional[str]
     updated_at: datetime
 
     class Config:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
@@ -16,9 +16,9 @@ class QualityReportResponse(BaseModel):
     release_success_rate: float
     device_online_rate: float
     ai_accuracy: float
-    dimensions: Any | None
-    summary: dict | None
-    project_id: int | None
+    dimensions: Optional[Any]
+    summary: Optional[dict]
+    project_id: Optional[int]
     generated_at: datetime
 
     class Config:

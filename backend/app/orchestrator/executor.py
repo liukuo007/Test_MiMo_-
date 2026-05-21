@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import random
+from typing import Optional
 
 import structlog
 
@@ -20,7 +21,7 @@ class StepExecutor:
     """步骤执行器 - 根据步骤类型分发到对应引擎（含 RunnerGo 条件分支 & 循环）"""
 
     def __init__(self):
-        self.dag: DAG | None = None
+        self.dag: Optional[DAG] = None
 
     def set_dag(self, dag: DAG):
         self.dag = dag

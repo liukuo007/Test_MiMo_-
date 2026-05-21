@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from typing import Optional
 
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -206,7 +207,7 @@ class AICopilotService:
             "suggested_devices": ["虚拟货柜 A", "虚拟货柜 B"],
         }
 
-    async def auto_fix_selector(self, selector: str, context: str | None = None) -> dict:
+    async def auto_fix_selector(self, selector: str, context: Optional[str] = None) -> dict:
         """Suggest fixes for a broken selector."""
         fixes = []
 

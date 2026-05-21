@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -12,9 +13,9 @@ class ScheduleCreate(BaseModel):
 
 
 class ScheduleUpdate(BaseModel):
-    name: str | None = None
-    cron_expression: str | None = None
-    is_active: bool | None = None
+    name: Optional[str] = None
+    cron_expression: Optional[str] = None
+    is_active: Optional[bool] = None
 
 
 class ScheduleResponse(BaseModel):
@@ -23,9 +24,9 @@ class ScheduleResponse(BaseModel):
     task_id: int
     cron_expression: str
     is_active: bool
-    last_run_at: datetime | None
-    next_run_at: datetime | None
-    created_by: int | None
+    last_run_at: Optional[datetime]
+    next_run_at: Optional[datetime]
+    created_by: Optional[int]
     created_at: datetime
     updated_at: datetime
 

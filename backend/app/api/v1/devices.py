@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from sqlalchemy import func, or_, select
@@ -21,10 +23,10 @@ router = APIRouter()
 async def list_devices(
     db: AsyncSession = Depends(get_db),
     current_user: CurrentUser = None,
-    status: DeviceStatus | None = None,
-    region: str | None = None,
-    project_id: int | None = None,
-    search: str | None = None,
+    status: Optional[DeviceStatus] = None,
+    region: Optional[str] = None,
+    project_id: Optional[int] = None,
+    search: Optional[str] = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ):
@@ -82,7 +84,7 @@ class VirtualHeartbeat(BaseModel):
 class VirtualEvent(BaseModel):
     device_sn: str
     event_type: str
-    details: dict | None = None
+    details: Optional[dict] = None
 
 
 @router.post("/virtual/heartbeat")

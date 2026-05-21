@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy import Boolean, DateTime, Float, ForeignKey, String, func
 from sqlalchemy.orm import Mapped, mapped_column
@@ -17,6 +18,6 @@ class QualityGateRule(Base):
     threshold: Mapped[float] = mapped_column(Float)
     operator: Mapped[str] = mapped_column(String(16), default="gte")
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    project_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"))
+    project_id: Mapped[Optional[int]] = mapped_column(ForeignKey("projects.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())

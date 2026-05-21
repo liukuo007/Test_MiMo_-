@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,10 +19,10 @@ router = APIRouter()
 async def list_test_cases(
     db: AsyncSession = Depends(get_db),
     current_user: CurrentUser = None,
-    project_id: int | None = None,
-    test_type: TestType | None = None,
-    priority: Priority | None = None,
-    search: str | None = None,
+    project_id: Optional[int] = None,
+    test_type: Optional[TestType] = None,
+    priority: Optional[Priority] = None,
+    search: Optional[str] = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ):

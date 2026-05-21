@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from enum import Enum
+from typing import Optional
 
 
 class MessageType(str, Enum):
@@ -22,8 +23,8 @@ class IoTMessage:
     message_type: MessageType
     device_sn: str
     payload: dict
-    timestamp: float | None = None
-    message_id: str | None = None
+    timestamp: Optional[float] = None
+    message_id: Optional[str] = None
 
     def to_mqtt_payload(self) -> bytes:
         return json.dumps({

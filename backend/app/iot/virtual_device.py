@@ -3,6 +3,7 @@ from __future__ import annotations
 import time
 import uuid
 from dataclasses import dataclass, field
+from typing import Optional
 
 from app.iot.device_state import DeviceEvent, DeviceState, DeviceStateMachine
 
@@ -17,7 +18,7 @@ class VirtualDevice:
     last_heartbeat: float = field(default_factory=time.time)
     events: list[dict] = field(default_factory=list)
 
-    async def send_event(self, event: DeviceEvent, params: dict | None = None) -> DeviceState:
+    async def send_event(self, event: DeviceEvent, params: Optional[dict] = None) -> DeviceState:
         old_state = self.state_machine.state
         new_state = self.state_machine.transition(event)
         self.events.append({
@@ -50,7 +51,7 @@ class VirtualDeviceManager:
         self._devices[sn] = device
         return device
 
-    def get(self, device_sn: str) -> VirtualDevice | None:
+    def get(self, device_sn: str) -> Optional[VirtualDevice]:
         return self._devices.get(device_sn)
 
     def remove(self, device_sn: str):

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
@@ -16,15 +17,15 @@ router = APIRouter()
 
 class SpanIngest(BaseModel):
     span_id: str
-    parent_span_id: str | None = None
+    parent_span_id: Optional[str] = None
     service: str
     operation: str
     status: str = "ok"
-    duration_ms: int | None = None
-    tags: dict | None = None
-    logs: list | None = None
+    duration_ms: Optional[int] = None
+    tags: Optional[dict] = None
+    logs: Optional[list] = None
     started_at: datetime
-    finished_at: datetime | None = None
+    finished_at: Optional[datetime] = None
 
 
 class TraceIngest(BaseModel):
@@ -32,10 +33,10 @@ class TraceIngest(BaseModel):
     service: str
     operation: str
     status: str = "ok"
-    duration_ms: int | None = None
-    tags: dict | None = None
+    duration_ms: Optional[int] = None
+    tags: Optional[dict] = None
     started_at: datetime
-    finished_at: datetime | None = None
+    finished_at: Optional[datetime] = None
     spans: list[SpanIngest] = []
 
 
@@ -76,8 +77,8 @@ async def ingest_trace(req: TraceIngest, db: AsyncSession = Depends(get_db)):
 @router.get("")
 async def list_traces(
     db: AsyncSession = Depends(get_db),
-    service: str | None = None,
-    status: str | None = None,
+    service: Optional[str] = None,
+    status: Optional[str] = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ):

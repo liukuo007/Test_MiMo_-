@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from fastapi import HTTPException, status
 
 
 class NotFoundError(HTTPException):
-    def __init__(self, resource: str = "Resource", resource_id: int | str | None = None):
+    def __init__(self, resource: str = "Resource", resource_id: int | Optional[str] = None):
         detail = f"{resource} not found"
         if resource_id:
             detail = f"{resource} with id '{resource_id}' not found"

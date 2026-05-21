@@ -4,6 +4,7 @@ import os
 import re
 import signal
 import subprocess
+from typing import Optional
 
 from fastapi import APIRouter
 from pydantic import BaseModel, field_validator
@@ -14,7 +15,7 @@ from app.dependencies import CurrentUser
 router = APIRouter()
 
 # 全局 Locust 进程管理
-_locust_process: subprocess.Popen | None = None
+_locust_process: Optional[subprocess.Popen] = None
 
 _SHELL_METACHARACTERS = set(";|&$`(){}")
 
@@ -55,9 +56,9 @@ class LocustStartRequest(BaseModel):
 
 class LocustStatus(BaseModel):
     running: bool
-    pid: int | None = None
-    host: str | None = None
-    users: int | None = None
+    pid: Optional[int] = None
+    host: Optional[str] = None
+    users: Optional[int] = None
 
 
 @router.post("/start", summary="启动 Locust 压测")

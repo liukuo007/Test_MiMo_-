@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from sqlalchemy import desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -14,11 +16,11 @@ class RegionService:
         result = await db.execute(select(Region).order_by(Region.id))
         return list(result.scalars().all())
 
-    async def get_region(self, db: AsyncSession, region_id: int) -> Region | None:
+    async def get_region(self, db: AsyncSession, region_id: int) -> Optional[Region]:
         result = await db.execute(select(Region).where(Region.id == region_id))
         return result.scalar_one_or_none()
 
-    async def get_region_by_code(self, db: AsyncSession, code: str) -> Region | None:
+    async def get_region_by_code(self, db: AsyncSession, code: str) -> Optional[Region]:
         result = await db.execute(select(Region).where(Region.code == code))
         return result.scalar_one_or_none()
 
@@ -29,7 +31,7 @@ class RegionService:
         await db.refresh(region)
         return region
 
-    async def update_region(self, db: AsyncSession, region_id: int, data: dict) -> Region | None:
+    async def update_region(self, db: AsyncSession, region_id: int, data: dict) -> Optional[Region]:
         region = await self.get_region(db, region_id)
         if not region:
             return None

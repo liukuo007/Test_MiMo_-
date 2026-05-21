@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import random
 from dataclasses import dataclass
+from typing import Optional
 
 import httpx
 import structlog
@@ -23,9 +24,9 @@ class PaymentRequest:
 @dataclass
 class PaymentResponse:
     success: bool
-    transaction_id: str | None = None
-    error_code: str | None = None
-    error_message: str | None = None
+    transaction_id: Optional[str] = None
+    error_code: Optional[str] = None
+    error_message: Optional[str] = None
 
 
 class PaymentMock:

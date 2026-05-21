@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -11,8 +12,8 @@ class WebhookTriggerRequest(BaseModel):
     project_id: int
     branch: str = "main"
     environment: str = "staging"
-    commit_sha: str | None = None
-    callback_url: str | None = None
+    commit_sha: Optional[str] = None
+    callback_url: Optional[str] = None
 
 
 class CICallbackConfig(BaseModel):
@@ -23,14 +24,14 @@ class CICallbackConfig(BaseModel):
 class PipelineStatus(BaseModel):
     task_id: int
     status: TaskStatus
-    branch: str | None
-    commit_sha: str | None
-    pass_rate: float | None
-    total_cases: int | None
-    passed_cases: int | None
-    failed_cases: int | None
+    branch: Optional[str]
+    commit_sha: Optional[str]
+    pass_rate: Optional[float]
+    total_cases: Optional[int]
+    passed_cases: Optional[int]
+    failed_cases: Optional[int]
     triggered_at: datetime
-    finished_at: datetime | None
+    finished_at: Optional[datetime]
 
     class Config:
         from_attributes = True

@@ -62,6 +62,14 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "UP"]
+ignore = [
+    "E501",   # line too long — enforce later with formatter
+    "E712",   # true/false comparison — cosmetic
+    "UP017",  # datetime-timezone-utc — breaks Python 3.9
+    "UP042",  # replace str enum — style preference
+    "UP045",  # non-pep604 annotation — breaks SQLAlchemy on Python 3.9
+    "F841",   # unused variable — review later
+]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

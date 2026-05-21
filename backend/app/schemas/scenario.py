@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
@@ -13,8 +13,8 @@ class ScenarioTemplateBase(BaseModel):
     icon: str = "ShoppingCart"
     color: str = "#1890ff"
     steps_definition: dict
-    params_schema: dict | None = None
-    wiremock_mapping: dict | None = None
+    params_schema: Optional[dict] = None
+    wiremock_mapping: Optional[dict] = None
     sort_order: int = 0
     is_active: bool = True
 
@@ -25,7 +25,7 @@ class ScenarioTemplateCreate(ScenarioTemplateBase):
 
 class ScenarioTemplateResponse(ScenarioTemplateBase):
     id: int
-    created_at: datetime | None = None
+    created_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -33,11 +33,11 @@ class ScenarioTemplateResponse(ScenarioTemplateBase):
 
 class ScenarioRunRequest(BaseModel):
     device_sns: list[str] = []
-    device_type: str | None = None
-    product_key: str | None = None
-    quantity: int | None = None
-    payment_method: str | None = None
-    timeout_seconds: int | None = None
+    device_type: Optional[str] = None
+    product_key: Optional[str] = None
+    quantity: Optional[int] = None
+    payment_method: Optional[str] = None
+    timeout_seconds: Optional[int] = None
 
 
 class StepResult(BaseModel):
@@ -46,18 +46,18 @@ class StepResult(BaseModel):
     status: str
     duration_ms: float
     detail: str = ""
-    error: str | None = None
+    error: Optional[str] = None
 
 
 class ScenarioRunResponse(BaseModel):
     execution_id: int
-    batch_id: int | None = None
+    batch_id: Optional[int] = None
     template_id: int
     template_name: str
     device_sn: str
-    device_name: str | None = None
+    device_name: Optional[str] = None
     is_real_device: bool = False
-    run_params: dict | None = None
+    run_params: Optional[dict] = None
     status: str
     total_duration_ms: float
     steps: list[StepResult]
@@ -74,20 +74,20 @@ class BatchRunResponse(BaseModel):
 
 class ScenarioExecutionResponse(BaseModel):
     id: int
-    batch_id: int | None = None
+    batch_id: Optional[int] = None
     template_id: int
-    template_name: str | None = None
+    template_name: Optional[str] = None
     device_sn: str
-    device_name: str | None = None
+    device_name: Optional[str] = None
     is_real_device: bool = False
-    run_params: Any | None = None
+    run_params: Optional[Any] = None
     status: str
-    steps_result: Any | None = None
-    total_duration_ms: float | None = None
-    error_message: str | None = None
-    triggered_by_name: str | None = None
-    created_at: datetime | None = None
-    finished_at: datetime | None = None
+    steps_result: Optional[Any] = None
+    total_duration_ms: Optional[float] = None
+    error_message: Optional[str] = None
+    triggered_by_name: Optional[str] = None
+    created_at: Optional[datetime] = None
+    finished_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -96,16 +96,16 @@ class ScenarioExecutionResponse(BaseModel):
 class BatchResponse(BaseModel):
     id: int
     template_id: int
-    template_name: str | None = None
+    template_name: Optional[str] = None
     name: str
     total_count: int
     passed_count: int
     failed_count: int
     status: str
-    run_params: Any | None = None
-    triggered_by_name: str | None = None
-    created_at: datetime | None = None
-    finished_at: datetime | None = None
+    run_params: Optional[Any] = None
+    triggered_by_name: Optional[str] = None
+    created_at: Optional[datetime] = None
+    finished_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -117,7 +117,7 @@ class DevicePickItem(BaseModel):
     name: str
     device_type: str
     status: str
-    region: str | None = None
-    temperature: float | None = None
-    last_heartbeat: datetime | None = None
-    firmware_version: str | None = None
+    region: Optional[str] = None
+    temperature: Optional[float] = None
+    last_heartbeat: Optional[datetime] = None
+    firmware_version: Optional[str] = None

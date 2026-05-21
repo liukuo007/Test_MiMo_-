@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -9,20 +10,20 @@ from app.models.project import Environment
 
 class ProjectCreate(BaseModel):
     name: str
-    description: str | None = None
+    description: Optional[str] = None
     environment: Environment = Environment.DEV
 
 
 class ProjectUpdate(BaseModel):
-    name: str | None = None
-    description: str | None = None
-    environment: Environment | None = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    environment: Optional[Environment] = None
 
 
 class ProjectResponse(BaseModel):
     id: int
     name: str
-    description: str | None
+    description: Optional[str]
     environment: Environment
     owner_id: int
     is_active: bool

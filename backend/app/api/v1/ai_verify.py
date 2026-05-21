@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -62,7 +64,7 @@ async def create_model_version(req: AIModelVersionCreate, db: AsyncSession = Dep
 @router.get("/evaluations", response_model=list[AIEvaluationResponse])
 async def list_evaluations(
     db: AsyncSession = Depends(get_db),
-    model_version_id: int | None = None,
+    model_version_id: Optional[int] = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ):

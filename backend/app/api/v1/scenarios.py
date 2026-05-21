@@ -3,6 +3,7 @@ from __future__ import annotations
 import time
 import uuid
 from datetime import datetime
+from typing import Optional
 
 import httpx
 import structlog
@@ -225,7 +226,7 @@ def _resolve_message(tpl_msg: str, params: dict) -> str:
         return tpl_msg
 
 
-def _build_run_params(req: ScenarioRunRequest | None, template: ScenarioTemplate) -> dict:
+def _build_run_params(req: Optional[ScenarioRunRequest], template: ScenarioTemplate) -> dict:
     product_key = (req.product_key if req else None) or "cola"
     product = PRODUCT_CATALOG.get(product_key, PRODUCT_CATALOG["cola"])
     quantity = (req.quantity if req else None) or 2
@@ -504,10 +505,10 @@ async def get_catalog():
 @router.get("/devices", response_model=list[DevicePickItem])
 async def list_devices_for_pick(
     db: AsyncSession = Depends(get_db),
-    search: str | None = Query(None, description="搜索设备 SN / 名称"),
-    status: str | None = Query(None, description="设备状态: online/offline/occupied"),
-    device_type: str | None = Query(None, description="设备类型: real/virtual_l1/virtual_l2/virtual_l3"),
-    region: str | None = Query(None, description="区域"),
+    search: Optional[str] = Query(None, description="搜索设备 SN / 名称"),
+    status: Optional[str] = Query(None, description="设备状态: online/offline/occupied"),
+    device_type: Optional[str] = Query(None, description="设备类型: real/virtual_l1/virtual_l2/virtual_l3"),
+    region: Optional[str] = Query(None, description="区域"),
     limit: int = Query(50, ge=1, le=200),
 ):
     """设备选择器 — 从 20 万台设备中搜索/筛选"""
@@ -556,7 +557,7 @@ async def list_devices_for_pick(
 @router.post("/templates/{template_id}/run", response_model=ScenarioRunResponse)
 async def run_scenario(
     template_id: int,
-    req: ScenarioRunRequest | None = None,
+    req: Optional[ScenarioRunRequest] = None,
     db: AsyncSession = Depends(get_db),
 ):
     """单设备场景执行 — 支持虚拟设备和真实设备"""
@@ -761,8 +762,8 @@ async def batch_run_scenario(
 @router.get("/executions")
 async def list_executions(
     db: AsyncSession = Depends(get_db),
-    template_id: int | None = None,
-    batch_id: int | None = None,
+    template_id: Optional[int] = None,
+    batch_id: Optional[int] = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=200),
 ):
@@ -817,7 +818,7 @@ async def list_executions(
 @router.get("/batches")
 async def list_batches(
     db: AsyncSession = Depends(get_db),
-    template_id: int | None = None,
+    template_id: Optional[int] = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ):
