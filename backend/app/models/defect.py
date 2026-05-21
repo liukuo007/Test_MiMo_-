@@ -60,7 +60,7 @@ class Defect(Base):
     device_sn: Mapped[Optional[str]] = mapped_column(String(64))
     test_case_id: Mapped[Optional[int]] = mapped_column(ForeignKey("test_cases.id"))
     test_result_id: Mapped[Optional[int]] = mapped_column(ForeignKey("test_results.id"))
-    assigned_to: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"))
+    assigned_to: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"), index=True)
     created_by: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"))
     screenshot_url: Mapped[Optional[str]] = mapped_column(String(512))
     tags: Mapped[Optional[dict]] = mapped_column(JSON)
